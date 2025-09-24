@@ -1,0 +1,75 @@
+<div class="page-header">
+  <div class="container">
+    <h1>{{ getGreeting() }}, {{ userProfile?.firstName }}</h1>
+    <p>{{ getUserRole() }} - Plateforme médicale NadyM</p>
+  </div>
+</div>
+
+<div class="container">
+  <!-- Statistics Cards -->
+  <div class="card-grid">
+    <div class="stat-card" *ngIf="userRoles.includes('DOCTOR') || userRoles.includes('NURSE')">
+      <h2 class="stat-number">{{ stats.totalPatients }}</h2>
+      <p class="stat-label">Patients total</p>
+    </div>
+    
+    <div class="stat-card" *ngIf="userRoles.includes('DOCTOR') || userRoles.includes('NURSE')">
+      <h2 class="stat-number">{{ stats.todayAppointments }}</h2>
+      <p class="stat-label">RDV aujourd'hui</p>
+    </div>
+    
+    <div class="stat-card" *ngIf="userRoles.includes('DOCTOR')">
+      <h2 class="stat-number">{{ stats.pendingPrescriptions }}</h2>
+      <p class="stat-label">Prescriptions en attente</p>
+    </div>
+    
+    <div class="stat-card" *ngIf="userRoles.includes('DOCTOR')">
+      <h2 class="stat-number">{{ stats.activeConsultations }}</h2>
+      <p class="stat-label">Consultations actives</p>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="action-section">
+    <h2>Actions rapides</h2>
+    <div class="action-buttons">
+      <button mat-raised-button color="primary" routerLink="/patients" 
+              *ngIf="userRoles.includes('DOCTOR') || userRoles.includes('NURSE')">
+        <mat-icon>people</mat-icon>
+        Voir les patients
+      </button>
+      
+      <button mat-raised-button color="accent" routerLink="/patients/appointments"
+              *ngIf="userRoles.includes('DOCTOR') || userRoles.includes('NURSE')">
+        <mat-icon>event</mat-icon>
+        Rendez-vous
+      </button>
+      
+      <button mat-raised-button color="primary" routerLink="/telemedicine"
+              *ngIf="userRoles.includes('DOCTOR') || userRoles.includes('PATIENT')">
+        <mat-icon>video_call</mat-icon>
+        Téléconsultation
+      </button>
+      
+      <button mat-raised-button color="accent" routerLink="/observance"
+              *ngIf="userRoles.includes('PATIENT')">
+        <mat-icon>medication</mat-icon>
+        Mes médicaments
+      </button>
+    </div>
+  </div>
+
+  <!-- Recent Activities -->
+  <div class="activities-section">
+    <h2>Activités récentes</h2>
+    <mat-card class="activities-card">
+      <mat-list>
+        <mat-list-item *ngFor="let activity of recentActivities">
+          <mat-icon matListItemIcon>{{ getActivityIcon(activity.type) }}</mat-icon>
+          <div matListItemTitle>{{ activity.message }}</div>
+          <div matListItemLine>Il y a {{ activity.time }}</div>
+        </mat-list-item>
+      </mat-list>
+    </mat-card>
+  </div>
+</div>

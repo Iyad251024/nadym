@@ -1,0 +1,146 @@
+{
+  "realm": "nadym",
+  "enabled": true,
+  "displayName": "NadyM Medical Platform",
+  "displayNameHtml": "<div class=\"kc-logo-text\"><span>NadyM Medical Platform</span></div>",
+  "registrationAllowed": false,
+  "registrationEmailAsUsername": true,
+  "rememberMe": true,
+  "verifyEmail": true,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "editUsernameAllowed": false,
+  "bruteForceProtected": true,
+  "permanentLockout": false,
+  "maxFailureWaitSeconds": 900,
+  "minimumQuickLoginWaitSeconds": 60,
+  "waitIncrementSeconds": 60,
+  "quickLoginCheckMilliSeconds": 1000,
+  "maxDeltaTimeSeconds": 43200,
+  "failureFactor": 30,
+  "roles": {
+    "realm": [
+      {
+        "name": "DOCTOR",
+        "description": "Medical Doctor Role",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "nadym"
+      },
+      {
+        "name": "NURSE",
+        "description": "Nurse Role",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "nadym"
+      },
+      {
+        "name": "PATIENT",
+        "description": "Patient Role",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "nadym"
+      },
+      {
+        "name": "ADMIN",
+        "description": "System Administrator Role",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "nadym"
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "nadym-frontend",
+      "enabled": true,
+      "publicClient": true,
+      "redirectUris": [
+        "http://localhost:4200/*",
+        "http://frontend/*"
+      ],
+      "webOrigins": [
+        "http://localhost:4200",
+        "http://frontend"
+      ],
+      "protocol": "openid-connect",
+      "fullScopeAllowed": true
+    },
+    {
+      "clientId": "nadym-backend",
+      "enabled": true,
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
+      "secret": "nadym-backend-secret",
+      "protocol": "openid-connect",
+      "fullScopeAllowed": true
+    }
+  ],
+  "users": [
+    {
+      "username": "doctor@nadym.com",
+      "enabled": true,
+      "email": "doctor@nadym.com",
+      "emailVerified": true,
+      "firstName": "Dr. Jean",
+      "lastName": "Dupont",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "doctor123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["DOCTOR"]
+    },
+    {
+      "username": "nurse@nadym.com",
+      "enabled": true,
+      "email": "nurse@nadym.com",
+      "emailVerified": true,
+      "firstName": "Marie",
+      "lastName": "Martin",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "nurse123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["NURSE"]
+    },
+    {
+      "username": "patient@nadym.com",
+      "enabled": true,
+      "email": "patient@nadym.com",
+      "emailVerified": true,
+      "firstName": "Pierre",
+      "lastName": "Durand",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "patient123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["PATIENT"]
+    },
+    {
+      "username": "admin@nadym.com",
+      "enabled": true,
+      "email": "admin@nadym.com",
+      "emailVerified": true,
+      "firstName": "Admin",
+      "lastName": "System",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["ADMIN"]
+    }
+  ]
+}

@@ -1,0 +1,256 @@
+version: '3.8'
+
+services:
+  # Database
+  postgres:
+    image: postgres:15
+    container_name: nadym-postgres
+    environment:
+      POSTGRES_DB: nadym
+      POSTGRES_USER: nadym
+      POSTGRES_PASSWORD: nadym123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - nadym-network
+
+  # Keycloak
+  keycloak:
+    image: quay.io/keycloak/keycloak:22.0
+    container_name: nadym-keycloak
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin123
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/nadym
+      KC_DB_USERNAME: nadym
+      KC_DB_PASSWORD: nadym123
+    ports:
+      - "8080:8080"
+    command: start-dev
+    depends_on:
+      - postgres
+    volumes:
+      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json
+    networks:
+      - nadym-network
+
+  # API Gateway
+  api-gateway:
+    build:
+      context: ./backend/api-gateway
+      dockerfile: Dockerfile
+    container_name: nadym-api-gateway
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      KEYCLOAK_URL: http://keycloak:8080
+    depends_on:
+      - keycloak
+    networks:
+      - nadym-network
+
+  # Patient Service
+  patient-service:
+    build:
+      context: ./backend/patient-service
+      dockerfile: Dockerfile
+    container_name: nadym-patient-service
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/nadym
+      SPRING_DATASOURCE_USERNAME: nadym
+      SPRING_DATASOURCE_PASSWORD: nadym123
+      KEYCLOAK_URL: http://keycloak:8080
+    depends_on:
+      - postgres
+      - keycloak
+    networks:
+      - nadym-network
+
+  # Observance Service
+  observance-service:
+    build:
+      context: ./backend/observance-service
+      dockerfile: Dockerfile
+    container_name: nadym-observance-service
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/nadym
+      SPRING_DATASOURCE_USERNAME: nadym
+      SPRING_DATASOURCE_PASSWORD: nadym123
+      KEYCLOAK_URL: http://keycloak:8080
+    depends_on:
+      - postgres
+      - keycloak
+    networks:
+      - nadym-network
+
+  # Telemedicine Service
+  telemedicine-service:
+    build:
+      context: ./backend/telemedicine-service
+      dockerfile: Dockerfile
+    container_name: nadym-telemedicine-service
+    ports:
+      - "8084:8084"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/nadym
+      SPRING_DATASOURCE_USERNAME: nadym
+      SPRING_DATASOURCE_PASSWORD: nadym123
+      KEYCLOAK_URL: http://keycloak:8080
+    depends_on:
+      - postgres
+      - keycloak
+    networks:
+      - nadym-network
+
+  # Teleexpertise Service
+  teleexpertise-service:
+    build:
+      context: ./backend/teleexpertise-service
+      dockerfile: Dockerfile
+    container_name: nadym-teleexpertise-service
+    ports:
+      - "8085:8085"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/nadym
+      SPRING_DATASOURCE_USERNAME: nadym
+      SPRING_DATASOURCE_PASSWORD: nadym123
+      KEYCLOAK_URL: http://keycloak:8080
+    depends_on:
+      - postgres
+      - keycloak
+    networks:
+      - nadym-network
+
+  # RCP Service
+  rcp-service:
+    build:
+      context: ./backend/rcp-service
+      dockerfile: Dockerfile
+    container_name: nadym-rcp-service
+    ports:
+      - "8086:8086"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/nadym
+      SPRING_DATASOURCE_USERNAME: nadym
+      SPRING_DATASOURCE_PASSWORD: nadym123
+      KEYCLOAK_URL: http://keycloak:8080
+    depends_on:
+      - postgres
+      - keycloak
+    networks:
+      - nadym-network
+
+  # DCC Service
+  dcc-service:
+    build:
+      context: ./backend/dcc-service
+      dockerfile: Dockerfile
+    container_name: nadym-dcc-service
+    ports:
+      - "8087:8087"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/nadym
+      SPRING_DATASOURCE_USERNAME: nadym
+      SPRING_DATASOURCE_PASSWORD: nadym123
+      KEYCLOAK_URL: http://keycloak:8080
+    depends_on:
+      - postgres
+      - keycloak
+    networks:
+      - nadym-network
+
+  # Transcription Service
+  transcription-service:
+    build:
+      context: ./backend/transcription-service
+      dockerfile: Dockerfile
+    container_name: nadym-transcription-service
+    ports:
+      - "8088:8088"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/nadym
+      SPRING_DATASOURCE_USERNAME: nadym
+      SPRING_DATASOURCE_PASSWORD: nadym123
+      KEYCLOAK_URL: http://keycloak:8080
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+    depends_on:
+      - postgres
+      - keycloak
+    networks:
+      - nadym-network
+
+  # Interoperability Service
+  interoperability-service:
+    build:
+      context: ./backend/interoperability-service
+      dockerfile: Dockerfile
+    container_name: nadym-interoperability-service
+    ports:
+      - "8089:8089"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/nadym
+      SPRING_DATASOURCE_USERNAME: nadym
+      SPRING_DATASOURCE_PASSWORD: nadym123
+      KEYCLOAK_URL: http://keycloak:8080
+    depends_on:
+      - postgres
+      - keycloak
+    networks:
+      - nadym-network
+
+  # Security Service
+  security-service:
+    build:
+      context: ./backend/security-service
+      dockerfile: Dockerfile
+    container_name: nadym-security-service
+    ports:
+      - "8090:8090"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/nadym
+      SPRING_DATASOURCE_USERNAME: nadym
+      SPRING_DATASOURCE_PASSWORD: nadym123
+      KEYCLOAK_URL: http://keycloak:8080
+    depends_on:
+      - postgres
+      - keycloak
+    networks:
+      - nadym-network
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: nadym-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - api-gateway
+    networks:
+      - nadym-network
+
+volumes:
+  postgres_data:
+
+networks:
+  nadym-network:
+    driver: bridge

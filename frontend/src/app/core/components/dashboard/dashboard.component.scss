@@ -1,0 +1,42 @@
+.action-section {
+  margin-bottom: 32px;
+  
+  h2 {
+    margin-bottom: 16px;
+    color: #333;
+    font-weight: 400;
+  }
+}
+
+.activities-section {
+  h2 {
+    margin-bottom: 16px;
+    color: #333;
+    font-weight: 400;
+  }
+}
+
+.activities-card {
+  .mat-mdc-list-item {
+    border-bottom: 1px solid #f0f0f0;
+    
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+  
+  .mat-mdc-list-item-icon {
+    color: #666;
+  }
+}
+
+@media (max-width: 768px) {
+  .action-buttons {
+    flex-direction: column;
+    
+    button {
+      width: 100%;
+      margin-bottom: 8px;
+    }
+  }
+}

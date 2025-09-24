@@ -1,0 +1,16 @@
+<div class="sidebar-content">
+  <div class="nav-section" *ngFor="let section of menuSections">
+    <h3>{{ section.title }}</h3>
+    <div class="nav-items">
+      <a 
+        *ngFor="let item of section.items" 
+        [routerLink]="item.route" 
+        routerLinkActive="active"
+        class="nav-item"
+        [style.display]="hasAccess(item) ? 'flex' : 'none'">
+        <mat-icon>{{ item.icon }}</mat-icon>
+        <span>{{ item.label }}</span>
+      </a>
+    </div>
+  </div>
+</div>
