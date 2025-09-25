@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: security-service
+server:
+  port: 8085
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+

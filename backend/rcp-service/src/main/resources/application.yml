@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: rcp-service
+server:
+  port: 8087
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+

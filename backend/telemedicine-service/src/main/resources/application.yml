@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: telemedicine-service
+server:
+  port: 8083
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+
