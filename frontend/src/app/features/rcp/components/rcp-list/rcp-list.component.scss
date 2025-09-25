@@ -1,0 +1,129 @@
+.rcp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 24px;
+  margin: 24px 0;
+}
+
+.rcp-card {
+  transition: transform 0.2s, box-shadow 0.2s;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+  
+  &.active {
+    border-left: 4px solid #4caf50;
+    background: linear-gradient(135deg, #f8fff8 0%, #ffffff 100%);
+  }
+  
+  .mat-mdc-card-header {
+    position: relative;
+    
+    .card-actions {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+    }
+  }
+}
+
+.rcp-info {
+  .info-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    color: #666;
+    
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+  
+  .participants {
+    margin-top: 16px;
+    
+    .participants-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #333;
+      
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+      }
+    }
+    
+    mat-chip-set {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    
+    mat-chip {
+      font-size: 0.75rem;
+    }
+  }
+  
+  .summary {
+    margin-top: 16px;
+    padding: 12px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    border-left: 3px solid #4caf50;
+    
+    .summary-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #333;
+      
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+      }
+    }
+    
+    p {
+      margin: 0;
+      color: #555;
+      font-style: italic;
+    }
+  }
+}
+
+.mat-mdc-card-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.mat-mdc-tab-group {
+  margin-top: 24px;
+}
+
+@media (max-width: 768px) {
+  .rcp-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .rcp-card {
+    .mat-mdc-card-header {
+      .card-actions {
+        position: static;
+        margin-top: 8px;
+      }
+    }
+  }
+}

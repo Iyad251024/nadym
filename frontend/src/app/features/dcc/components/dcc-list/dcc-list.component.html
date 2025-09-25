@@ -1,0 +1,210 @@
+<div class="page-header">
+  <div class="container">
+    <h1>DCC - Dossier Communicant en Cancérologie</h1>
+    <p>Suivi des patients chroniques en oncologie</p>
+  </div>
+</div>
+
+<div class="container">
+  <!-- Quick Stats -->
+  <div class="card-grid">
+    <div class="stat-card">
+      <h2 class="stat-number">{{ activePatients.length }}</h2>
+      <p class="stat-label">Patients actifs</p>
+    </div>
+    
+    <div class="stat-card">
+      <h2 class="stat-number">{{ activePatients.filter(p => p.riskLevel === 'high').length }}</h2>
+      <p class="stat-label">Risque élevé</p>
+    </div>
+    
+    <div class="stat-card">
+      <h2 class="stat-number">{{ activePatients.filter(p => p.nextAppointment && isUpcoming(p.nextAppointment)).length }}</h2>
+      <p class="stat-label">RDV cette semaine</p>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="action-buttons">
+    <button mat-raised-button color="primary" (click)="newDcc()" 
+            *ngIf="userRoles.includes('DOCTOR')">
+      <mat-icon>add</mat-icon>
+      Nouveau DCC
+    </button>
+  </div>
+
+  <!-- DCC Tabs -->
+  <mat-tab-group>
+    <!-- Active Patients -->
+    <mat-tab label="Patients actifs" [badgeContent]="activePatients.length">
+      <div class="dcc-grid">
+        <mat-card *ngFor="let patient of activePatients" class="dcc-card" 
+                  [class.high-risk]="patient.riskLevel === 'high'"
+                  [class.upcoming-appointment]="patient.nextAppointment && isUpcoming(patient.nextAppointment)">
+          <mat-card-header>
+            <mat-icon mat-card-avatar [color]="getTreatmentPhaseColor(patient.treatmentPhase)">
+              folder_shared
+            </mat-icon>
+            <mat-card-title>{{ patient.patientName }}, {{ patient.patientAge }} ans</mat-card-title>
+            <mat-card-subtitle>{{ patient.diagnosis }} - {{ patient.stage }}</mat-card-subtitle>
+            <div class="card-actions">
+              <mat-chip [color]="getRiskLevelColor(patient.riskLevel)" selected>
+                {{ getRiskLevelLabel(patient.riskLevel) }}
+              </mat-chip>
+            </div>
+          </mat-card-header>
+          
+          <mat-card-content>
+            <div class="dcc-info">
+              <div class="info-row">
+                <mat-icon>medical_services</mat-icon>
+                <span>Phase: {{ getTreatmentPhaseLabel(patient.treatmentPhase) }}</span>
+              </div>
+              
+              <div class="info-row">
+                <mat-icon>person</mat-icon>
+                <span>{{ patient.assignedDoctor }}</span>
+                <span *ngIf="patient.assignedNurse"> • {{ patient.assignedNurse }}</span>
+              </div>
+              
+              <div class="info-row">
+                <mat-icon>update</mat-icon>
+                <span>Dernière MAJ: {{ formatDate(patient.lastUpdate) }}</span>
+              </div>
+              
+              <div class="info-row" *ngIf="patient.nextAppointment">
+                <mat-icon [class.upcoming]="isUpcoming(patient.nextAppointment)">event</mat-icon>
+                <span [class.upcoming]="isUpcoming(patient.nextAppointment)">
+                  Prochain RDV: {{ formatDate(patient.nextAppointment) }}
+                </span>
+              </div>
+              
+              <div class="completion-info">
+                <div class="completion-header">
+                  <mat-icon>assessment</mat-icon>
+                  <span>Complétude du dossier</span>
+                </div>
+                <div class="completion-bar">
+                  <mat-progress-bar 
+                    mode="determinate" 
+                    [value]="patient.completionRate"
+                    [color]="getCompletionColor(patient.completionRate)">
+                  </mat-progress-bar>
+                  <span class="completion-rate">{{ patient.completionRate }}%</span>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+          
+          <mat-card-actions>
+            <button mat-raised-button color="primary" (click)="viewDcc(patient)">
+              <mat-icon>visibility</mat-icon>
+              Consulter
+            </button>
+            
+            <button mat-button (click)="editDcc(patient)" 
+                    *ngIf="userRoles.includes('DOCTOR')">
+              <mat-icon>edit</mat-icon>
+              Modifier
+            </button>
+            
+            <button mat-button color="warn" (click)="suspendDcc(patient)" 
+                    *ngIf="userRoles.includes('DOCTOR')">
+              <mat-icon>pause</mat-icon>
+              Suspendre
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </mat-tab>
+
+    <!-- Completed Patients -->
+    <mat-tab label="Terminés" [badgeContent]="completedPatients.length" *ngIf="completedPatients.length > 0">
+      <div class="dcc-grid">
+        <mat-card *ngFor="let patient of completedPatients" class="dcc-card">
+          <mat-card-header>
+            <mat-icon mat-card-avatar color="primary">check_circle</mat-icon>
+            <mat-card-title>{{ patient.patientName }}, {{ patient.patientAge }} ans</mat-card-title>
+            <mat-card-subtitle>{{ patient.diagnosis }} - {{ patient.stage }}</mat-card-subtitle>
+          </mat-card-header>
+          
+          <mat-card-content>
+            <div class="dcc-info">
+              <div class="info-row">
+                <mat-icon>medical_services</mat-icon>
+                <span>Phase: {{ getTreatmentPhaseLabel(patient.treatmentPhase) }}</span>
+              </div>
+              
+              <div class="info-row">
+                <mat-icon>person</mat-icon>
+                <span>{{ patient.assignedDoctor }}</span>
+              </div>
+              
+              <div class="info-row">
+                <mat-icon>done</mat-icon>
+                <span>Dossier terminé le {{ formatDate(patient.lastUpdate) }}</span>
+              </div>
+            </div>
+          </mat-card-content>
+          
+          <mat-card-actions>
+            <button mat-raised-button color="primary" (click)="viewDcc(patient)">
+              <mat-icon>description</mat-icon>
+              Voir l'historique
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </mat-tab>
+
+    <!-- Suspended Patients -->
+    <mat-tab label="Suspendus" [badgeContent]="suspendedPatients.length" *ngIf="suspendedPatients.length > 0">
+      <div class="dcc-grid">
+        <mat-card *ngFor="let patient of suspendedPatients" class="dcc-card suspended">
+          <mat-card-header>
+            <mat-icon mat-card-avatar color="warn">pause_circle</mat-icon>
+            <mat-card-title>{{ patient.patientName }}, {{ patient.patientAge }} ans</mat-card-title>
+            <mat-card-subtitle>{{ patient.diagnosis }} - {{ patient.stage }}</mat-card-subtitle>
+          </mat-card-header>
+          
+          <mat-card-content>
+            <div class="dcc-info">
+              <div class="info-row">
+                <mat-icon>medical_services</mat-icon>
+                <span>Phase: {{ getTreatmentPhaseLabel(patient.treatmentPhase) }}</span>
+              </div>
+              
+              <div class="info-row">
+                <mat-icon>person</mat-icon>
+                <span>{{ patient.assignedDoctor }}</span>
+              </div>
+              
+              <div class="info-row">
+                <mat-icon>pause</mat-icon>
+                <span>Suspendu le {{ formatDate(patient.lastUpdate) }}</span>
+              </div>
+            </div>
+          </mat-card-content>
+          
+          <mat-card-actions>
+            <button mat-raised-button color="accent" (click)="resumeDcc(patient)" 
+                    *ngIf="userRoles.includes('DOCTOR')">
+              <mat-icon>play_arrow</mat-icon>
+              Reprendre
+            </button>
+            
+            <button mat-button (click)="viewDcc(patient)">
+              <mat-icon>visibility</mat-icon>
+              Consulter
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+
+  <!-- Loading Spinner -->
+  <div class="loading-spinner" *ngIf="loading">
+    <mat-spinner></mat-spinner>
+  </div>
+</div>

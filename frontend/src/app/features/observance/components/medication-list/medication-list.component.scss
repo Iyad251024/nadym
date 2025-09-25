@@ -1,0 +1,70 @@
+.medications-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.medication-card {
+  .mat-mdc-card-header {
+    position: relative;
+    
+    .card-actions {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+    }
+  }
+}
+
+.medication-info {
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    
+    .label {
+      font-weight: 500;
+      color: #666;
+    }
+  }
+  
+  .adherence-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    max-width: 200px;
+    
+    mat-progress-bar {
+      flex: 1;
+    }
+    
+    .adherence-rate {
+      font-weight: 500;
+      min-width: 40px;
+    }
+  }
+}
+
+.mat-mdc-card-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .medications-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .medication-card {
+    .mat-mdc-card-header {
+      .card-actions {
+        position: static;
+        margin-top: 8px;
+      }
+    }
+  }
+}

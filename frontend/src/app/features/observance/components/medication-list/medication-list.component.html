@@ -1,0 +1,108 @@
+<div class="page-header">
+  <div class="container">
+    <h1>Suivi des médicaments</h1>
+    <p>Gestion de l'observance médicamenteuse</p>
+  </div>
+</div>
+
+<div class="container">
+  <!-- Quick Stats -->
+  <div class="card-grid" *ngIf="userRoles.includes('PATIENT')">
+    <div class="stat-card">
+      <h2 class="stat-number">{{ medications.length }}</h2>
+      <p class="stat-label">Médicaments actifs</p>
+    </div>
+    
+    <div class="stat-card">
+      <h2 class="stat-number">{{ (medications.reduce((sum, med) => sum + med.adherenceRate, 0) / medications.length).toFixed(0) }}%</h2>
+      <p class="stat-label">Observance moyenne</p>
+    </div>
+    
+    <div class="stat-card">
+      <h2 class="stat-number">3</h2>
+      <p class="stat-label">Prises aujourd'hui</p>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="action-buttons">
+    <button mat-raised-button color="primary" routerLink="/observance/tracking" 
+            *ngIf="userRoles.includes('PATIENT')">
+      <mat-icon>add_circle</mat-icon>
+      Enregistrer une prise
+    </button>
+    
+    <button mat-raised-button color="accent" routerLink="/observance/reminders"
+            *ngIf="userRoles.includes('PATIENT')">
+      <mat-icon>notifications</mat-icon>
+      Mes rappels
+    </button>
+    
+    <button mat-raised-button color="primary" routerLink="/observance/reports"
+            *ngIf="userRoles.includes('DOCTOR') || userRoles.includes('NURSE')">
+      <mat-icon>assessment</mat-icon>
+      Rapports d'observance
+    </button>
+  </div>
+
+  <!-- Medications List -->
+  <div class="medications-grid">
+    <mat-card *ngFor="let medication of medications" class="medication-card">
+      <mat-card-header>
+        <mat-card-title>{{ medication.name }}</mat-card-title>
+        <mat-card-subtitle>{{ medication.dosage }} - {{ medication.frequency }}</mat-card-subtitle>
+        <div class="card-actions">
+          <mat-chip [color]="getStatusColor(medication.status)" selected>
+            {{ getStatusLabel(medication.status) }}
+          </mat-chip>
+        </div>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <div class="medication-info">
+          <div class="info-row">
+            <span class="label">Période:</span>
+            <span>{{ medication.startDate | date:'dd/MM/yyyy' }} - {{ medication.endDate | date:'dd/MM/yyyy' }}</span>
+          </div>
+          
+          <div class="info-row">
+            <span class="label">Observance:</span>
+            <div class="adherence-info">
+              <mat-progress-bar 
+                mode="determinate" 
+                [value]="medication.adherenceRate"
+                [color]="getAdherenceColor(medication.adherenceRate)">
+              </mat-progress-bar>
+              <span class="adherence-rate">{{ medication.adherenceRate }}%</span>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+      
+      <mat-card-actions *ngIf="userRoles.includes('PATIENT')">
+        <button mat-button color="primary" (click)="recordIntake(medication)" 
+                [disabled]="medication.status !== 'active'">
+          <mat-icon>check_circle</mat-icon>
+          Prise effectuée
+        </button>
+        
+        <button mat-button color="warn" (click)="pauseMedication(medication)" 
+                *ngIf="medication.status === 'active'">
+          <mat-icon>pause</mat-icon>
+          Pause
+        </button>
+        
+        <button mat-button color="accent" (click)="resumeMedication(medication)" 
+                *ngIf="medication.status === 'paused'">
+          <mat-icon>play_arrow</mat-icon>
+          Reprendre
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div class="loading-spinner" *ngIf="loading">
+    <mat-spinner></mat-spinner>
+  </div>
+</div>

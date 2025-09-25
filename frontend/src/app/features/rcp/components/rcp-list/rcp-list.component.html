@@ -1,0 +1,225 @@
+<div class="page-header">
+  <div class="container">
+    <h1>RCP - Réunions de Concertation Pluridisciplinaire</h1>
+    <p>Organisation et suivi des réunions médicales</p>
+  </div>
+</div>
+
+<div class="container">
+  <!-- Quick Stats -->
+  <div class="card-grid">
+    <div class="stat-card">
+      <h2 class="stat-number">{{ upcomingMeetings.length }}</h2>
+      <p class="stat-label">RCP à venir</p>
+    </div>
+    
+    <div class="stat-card">
+      <h2 class="stat-number">{{ activeMeetings.length }}</h2>
+      <p class="stat-label">En cours</p>
+    </div>
+    
+    <div class="stat-card">
+      <h2 class="stat-number">{{ completedMeetings.length }}</h2>
+      <p class="stat-label">Terminées</p>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="action-buttons">
+    <button mat-raised-button color="primary" (click)="newRcp()">
+      <mat-icon>add</mat-icon>
+      Organiser une RCP
+    </button>
+  </div>
+
+  <!-- RCP Tabs -->
+  <mat-tab-group>
+    <!-- Active Meetings -->
+    <mat-tab label="En cours" [badgeContent]="activeMeetings.length" *ngIf="activeMeetings.length > 0">
+      <div class="rcp-grid">
+        <mat-card *ngFor="let meeting of activeMeetings" class="rcp-card active">
+          <mat-card-header>
+            <mat-icon mat-card-avatar color="accent">groups</mat-icon>
+            <mat-card-title>{{ meeting.title }}</mat-card-title>
+            <mat-card-subtitle>{{ meeting.patientName }}, {{ meeting.patientAge }} ans</mat-card-subtitle>
+            <div class="card-actions">
+              <mat-chip [color]="getStatusColor(meeting.status)" selected>
+                {{ getStatusLabel(meeting.status) }}
+              </mat-chip>
+            </div>
+          </mat-card-header>
+          
+          <mat-card-content>
+            <div class="rcp-info">
+              <div class="info-row">
+                <mat-icon>schedule</mat-icon>
+                <span>{{ formatDateTime(meeting.scheduledDate) }}</span>
+              </div>
+              
+              <div class="info-row">
+                <mat-icon>{{ getLocationIcon(meeting.location) }}</mat-icon>
+                <span>{{ getLocationLabel(meeting.location) }} - {{ meeting.duration }}min</span>
+              </div>
+              
+              <div class="info-row">
+                <mat-icon>medical_services</mat-icon>
+                <span>{{ meeting.pathology }}</span>
+              </div>
+              
+              <div class="participants">
+                <div class="participants-header">
+                  <mat-icon>people</mat-icon>
+                  <span>Participants ({{ meeting.participants.length }})</span>
+                </div>
+                <mat-chip-set>
+                  <mat-chip *ngFor="let participant of meeting.participants" color="primary">
+                    {{ participant }}
+                  </mat-chip>
+                </mat-chip-set>
+              </div>
+            </div>
+          </mat-card-content>
+          
+          <mat-card-actions>
+            <button mat-raised-button color="accent" (click)="joinRcp(meeting)">
+              <mat-icon>video_call</mat-icon>
+              Rejoindre
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </mat-tab>
+
+    <!-- Upcoming Meetings -->
+    <mat-tab label="À venir" [badgeContent]="upcomingMeetings.length">
+      <div class="rcp-grid">
+        <mat-card *ngFor="let meeting of upcomingMeetings" class="rcp-card">
+          <mat-card-header>
+            <mat-icon mat-card-avatar color="primary">groups</mat-icon>
+            <mat-card-title>{{ meeting.title }}</mat-card-title>
+            <mat-card-subtitle>{{ meeting.patientName }}, {{ meeting.patientAge }} ans</mat-card-subtitle>
+            <div class="card-actions">
+              <mat-chip [color]="getStatusColor(meeting.status)" selected>
+                {{ getStatusLabel(meeting.status) }}
+              </mat-chip>
+            </div>
+          </mat-card-header>
+          
+          <mat-card-content>
+            <div class="rcp-info">
+              <div class="info-row">
+                <mat-icon>schedule</mat-icon>
+                <span>{{ formatDateTime(meeting.scheduledDate) }}</span>
+              </div>
+              
+              <div class="info-row">
+                <mat-icon>{{ getLocationIcon(meeting.location) }}</mat-icon>
+                <span>{{ getLocationLabel(meeting.location) }} - {{ meeting.duration }}min</span>
+              </div>
+              
+              <div class="info-row">
+                <mat-icon>person</mat-icon>
+                <span>Organisateur: {{ meeting.organizer }}</span>
+              </div>
+              
+              <div class="info-row">
+                <mat-icon>medical_services</mat-icon>
+                <span>{{ meeting.pathology }}</span>
+              </div>
+              
+              <div class="participants">
+                <div class="participants-header">
+                  <mat-icon>people</mat-icon>
+                  <span>Participants ({{ meeting.participants.length }})</span>
+                </div>
+                <mat-chip-set>
+                  <mat-chip *ngFor="let participant of meeting.participants" color="primary">
+                    {{ participant }}
+                  </mat-chip>
+                </mat-chip-set>
+              </div>
+            </div>
+          </mat-card-content>
+          
+          <mat-card-actions>
+            <button mat-raised-button color="primary" (click)="joinRcp(meeting)" 
+                    [disabled]="!canJoin(meeting)">
+              <mat-icon>video_call</mat-icon>
+              Rejoindre
+            </button>
+            
+            <button mat-button (click)="viewRcp(meeting)">
+              <mat-icon>visibility</mat-icon>
+              Détails
+            </button>
+            
+            <button mat-button color="warn" (click)="cancelRcp(meeting)" 
+                    *ngIf="canCancel(meeting)">
+              <mat-icon>cancel</mat-icon>
+              Annuler
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </mat-tab>
+
+    <!-- Completed Meetings -->
+    <mat-tab label="Historique" [badgeContent]="completedMeetings.length">
+      <div class="rcp-grid">
+        <mat-card *ngFor="let meeting of completedMeetings" class="rcp-card">
+          <mat-card-header>
+            <mat-icon mat-card-avatar [color]="meeting.status === 'completed' ? 'primary' : 'warn'">
+              {{ meeting.status === 'completed' ? 'check_circle' : 'cancel' }}
+            </mat-icon>
+            <mat-card-title>{{ meeting.title }}</mat-card-title>
+            <mat-card-subtitle>{{ meeting.patientName }}, {{ meeting.patientAge }} ans</mat-card-subtitle>
+            <div class="card-actions">
+              <mat-chip [color]="getStatusColor(meeting.status)" selected>
+                {{ getStatusLabel(meeting.status) }}
+              </mat-chip>
+            </div>
+          </mat-card-header>
+          
+          <mat-card-content>
+            <div class="rcp-info">
+              <div class="info-row">
+                <mat-icon>schedule</mat-icon>
+                <span>{{ formatDateTime(meeting.scheduledDate) }}</span>
+              </div>
+              
+              <div class="info-row">
+                <mat-icon>{{ getLocationIcon(meeting.location) }}</mat-icon>
+                <span>{{ getLocationLabel(meeting.location) }} - {{ meeting.duration }}min</span>
+              </div>
+              
+              <div class="info-row">
+                <mat-icon>medical_services</mat-icon>
+                <span>{{ meeting.pathology }}</span>
+              </div>
+              
+              <div class="summary" *ngIf="meeting.summary">
+                <div class="summary-header">
+                  <mat-icon>summarize</mat-icon>
+                  <span>Décision RCP</span>
+                </div>
+                <p>{{ meeting.summary }}</p>
+              </div>
+            </div>
+          </mat-card-content>
+          
+          <mat-card-actions>
+            <button mat-raised-button color="primary" (click)="viewRcp(meeting)">
+              <mat-icon>description</mat-icon>
+              Voir le compte-rendu
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+
+  <!-- Loading Spinner -->
+  <div class="loading-spinner" *ngIf="loading">
+    <mat-spinner></mat-spinner>
+  </div>
+</div>

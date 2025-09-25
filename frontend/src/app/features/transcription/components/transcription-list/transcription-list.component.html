@@ -1,0 +1,173 @@
+<div class="page-header">
+  <div class="container">
+    <h1>Transcription IA</h1>
+    <p>Transcription automatique des consultations</p>
+  </div>
+</div>
+
+<div class="container">
+  <!-- Quick Stats -->
+  <div class="card-grid">
+    <div class="stat-card">
+      <h2 class="stat-number">{{ completedTranscriptions.length }}</h2>
+      <p class="stat-label">Transcriptions terminées</p>
+    </div>
+    
+    <div class="stat-card">
+      <h2 class="stat-number">{{ processingTranscriptions.length }}</h2>
+      <p class="stat-label">En cours de traitement</p>
+    </div>
+    
+    <div class="stat-card">
+      <h2 class="stat-number">{{ (completedTranscriptions.reduce((sum, t) => sum + (t.confidenceScore || 0), 0) / completedTranscriptions.length).toFixed(0) }}%</h2>
+      <p class="stat-label">Précision moyenne</p>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="action-buttons">
+    <button mat-raised-button color="primary" (click)="uploadAudio()">
+      <mat-icon>upload</mat-icon>
+      Nouvelle transcription
+    </button>
+  </div>
+
+  <!-- Transcription Tabs -->
+  <mat-tab-group>
+    <!-- Processing Transcriptions -->
+    <mat-tab label="En cours" [badgeContent]="processingTranscriptions.length" *ngIf="processingTranscriptions.length > 0">
+      <div class="transcriptions-grid">
+        <mat-card *ngFor="let transcription of processingTranscriptions" class="transcription-card processing">
+          <mat-card-header>
+            <mat-icon mat-card-avatar color="accent">transcribe</mat-icon>
+            <mat-card-title>{{ transcription.patientName }}</mat-card-title>
+            <mat-card-subtitle>{{ formatDateTime(transcription.date) }}</mat-card-subtitle>
+            <div class="card-actions">
+              <mat-chip [color]="getStatusColor(transcription.status)" selected>
+                {{ getStatusLabel(transcription.status) }}
+              </mat-chip>
+            </div>
+          </mat-card-header>
+          
+          <mat-card-content>
+            <div class="transcription-info">
+              <div class="info-row">
+                <mat-icon>schedule</mat-icon>
+                <span>{{ transcription.duration }} minutes</span>
+              </div>
+              <div class="info-row">
+                <mat-icon>smart_toy</mat-icon>
+                <span>Traitement IA en cours...</span>
+              </div>
+            </div>
+            
+            <mat-progress-bar mode="indeterminate" color="accent"></mat-progress-bar>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-tab>
+
+    <!-- Completed Transcriptions -->
+    <mat-tab label="Terminées" [badgeContent]="completedTranscriptions.length">
+      <div class="transcriptions-grid">
+        <mat-card *ngFor="let transcription of completedTranscriptions" class="transcription-card">
+          <mat-card-header>
+            <mat-icon mat-card-avatar color="primary">description</mat-icon>
+            <mat-card-title>{{ transcription.patientName }}</mat-card-title>
+            <mat-card-subtitle>{{ formatDateTime(transcription.date) }}</mat-card-subtitle>
+            <div class="card-actions">
+              <mat-chip [color]="getStatusColor(transcription.status)" selected>
+                {{ getStatusLabel(transcription.status) }}
+              </mat-chip>
+            </div>
+          </mat-card-header>
+          
+          <mat-card-content>
+            <div class="transcription-info">
+              <div class="info-row">
+                <mat-icon>schedule</mat-icon>
+                <span>{{ transcription.duration }} minutes</span>
+              </div>
+              
+              <div class="info-row" *ngIf="transcription.confidenceScore">
+                <mat-icon>verified</mat-icon>
+                <div class="confidence-info">
+                  <span>Précision: </span>
+                  <mat-progress-bar 
+                    mode="determinate" 
+                    [value]="transcription.confidenceScore"
+                    [color]="getConfidenceColor(transcription.confidenceScore)">
+                  </mat-progress-bar>
+                  <span class="confidence-score">{{ transcription.confidenceScore }}%</span>
+                </div>
+              </div>
+              
+              <div class="features">
+                <mat-chip-set>
+                  <mat-chip *ngIf="transcription.hasStructuredNotes" color="primary" selected>
+                    <mat-icon>format_list_bulleted</mat-icon>
+                    Notes structurées
+                  </mat-chip>
+                  <mat-chip *ngIf="transcription.hasSummary" color="accent" selected>
+                    <mat-icon>summarize</mat-icon>
+                    Résumé IA
+                  </mat-chip>
+                </mat-chip-set>
+              </div>
+            </div>
+          </mat-card-content>
+          
+          <mat-card-actions>
+            <button mat-raised-button color="primary" (click)="viewTranscription(transcription)">
+              <mat-icon>visibility</mat-icon>
+              Voir la transcription
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </mat-tab>
+
+    <!-- Failed Transcriptions -->
+    <mat-tab label="Échecs" [badgeContent]="failedTranscriptions.length" *ngIf="failedTranscriptions.length > 0">
+      <div class="transcriptions-grid">
+        <mat-card *ngFor="let transcription of failedTranscriptions" class="transcription-card failed">
+          <mat-card-header>
+            <mat-icon mat-card-avatar color="warn">error</mat-icon>
+            <mat-card-title>{{ transcription.patientName }}</mat-card-title>
+            <mat-card-subtitle>{{ formatDateTime(transcription.date) }}</mat-card-subtitle>
+            <div class="card-actions">
+              <mat-chip [color]="getStatusColor(transcription.status)" selected>
+                {{ getStatusLabel(transcription.status) }}
+              </mat-chip>
+            </div>
+          </mat-card-header>
+          
+          <mat-card-content>
+            <div class="transcription-info">
+              <div class="info-row">
+                <mat-icon>schedule</mat-icon>
+                <span>{{ transcription.duration }} minutes</span>
+              </div>
+              <div class="info-row error">
+                <mat-icon>warning</mat-icon>
+                <span>Échec du traitement automatique</span>
+              </div>
+            </div>
+          </mat-card-content>
+          
+          <mat-card-actions>
+            <button mat-raised-button color="accent" (click)="retryTranscription(transcription)">
+              <mat-icon>refresh</mat-icon>
+              Réessayer
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+
+  <!-- Loading Spinner -->
+  <div class="loading-spinner" *ngIf="loading">
+    <mat-spinner></mat-spinner>
+  </div>
+</div>

@@ -1,0 +1,181 @@
+<div class="page-header">
+  <div class="container">
+    <h1>Téléconsultations</h1>
+    <p>Consultations vidéo sécurisées</p>
+  </div>
+</div>
+
+<div class="container">
+  <!-- Quick Stats -->
+  <div class="card-grid">
+    <div class="stat-card">
+      <h2 class="stat-number">{{ upcomingConsultations.length }}</h2>
+      <p class="stat-label">Consultations à venir</p>
+    </div>
+    
+    <div class="stat-card">
+      <h2 class="stat-number">{{ activeConsultations.length }}</h2>
+      <p class="stat-label">En cours</p>
+    </div>
+    
+    <div class="stat-card">
+      <h2 class="stat-number">{{ pastConsultations.length }}</h2>
+      <p class="stat-label">Terminées</p>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="action-buttons">
+    <button mat-raised-button color="primary" (click)="scheduleConsultation()" 
+            *ngIf="userRoles.includes('DOCTOR') || userRoles.includes('NURSE')">
+      <mat-icon>add</mat-icon>
+      Programmer une consultation
+    </button>
+    
+    <button mat-raised-button color="accent" routerLink="/telemedicine/messages">
+      <mat-icon matBadge="3" matBadgeColor="warn">chat</mat-icon>
+      Messages
+    </button>
+  </div>
+
+  <!-- Consultation Tabs -->
+  <mat-tab-group>
+    <!-- Active Consultations -->
+    <mat-tab label="En cours" [badgeContent]="activeConsultations.length" *ngIf="activeConsultations.length > 0">
+      <div class="consultations-grid">
+        <mat-card *ngFor="let consultation of activeConsultations" class="consultation-card active">
+          <mat-card-header>
+            <mat-icon mat-card-avatar [color]="getStatusColor(consultation.status)">
+              {{ getTypeIcon(consultation.type) }}
+            </mat-icon>
+            <mat-card-title>
+              {{ userRoles.includes('DOCTOR') ? consultation.patientName : consultation.doctorName }}
+            </mat-card-title>
+            <mat-card-subtitle>{{ formatDateTime(consultation.scheduledTime) }}</mat-card-subtitle>
+            <div class="card-actions">
+              <mat-chip [color]="getStatusColor(consultation.status)" selected>
+                {{ getStatusLabel(consultation.status) }}
+              </mat-chip>
+            </div>
+          </mat-card-header>
+          
+          <mat-card-content>
+            <div class="consultation-info">
+              <div class="info-row" *ngIf="consultation.duration">
+                <mat-icon>schedule</mat-icon>
+                <span>{{ consultation.duration }} minutes</span>
+              </div>
+              <div class="info-row">
+                <mat-icon>videocam</mat-icon>
+                <span>Consultation vidéo</span>
+              </div>
+            </div>
+          </mat-card-content>
+          
+          <mat-card-actions>
+            <button mat-raised-button color="accent" (click)="joinConsultation(consultation)">
+              <mat-icon>video_call</mat-icon>
+              Rejoindre
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </mat-tab>
+
+    <!-- Upcoming Consultations -->
+    <mat-tab label="À venir" [badgeContent]="upcomingConsultations.length">
+      <div class="consultations-grid">
+        <mat-card *ngFor="let consultation of upcomingConsultations" class="consultation-card">
+          <mat-card-header>
+            <mat-icon mat-card-avatar [color]="getStatusColor(consultation.status)">
+              {{ getTypeIcon(consultation.type) }}
+            </mat-icon>
+            <mat-card-title>
+              {{ userRoles.includes('DOCTOR') ? consultation.patientName : consultation.doctorName }}
+            </mat-card-title>
+            <mat-card-subtitle>{{ formatDateTime(consultation.scheduledTime) }}</mat-card-subtitle>
+            <div class="card-actions">
+              <mat-chip [color]="getStatusColor(consultation.status)" selected>
+                {{ getStatusLabel(consultation.status) }}
+              </mat-chip>
+            </div>
+          </mat-card-header>
+          
+          <mat-card-content>
+            <div class="consultation-info">
+              <div class="info-row">
+                <mat-icon>videocam</mat-icon>
+                <span>Consultation vidéo</span>
+              </div>
+              <div class="info-row">
+                <mat-icon>access_time</mat-icon>
+                <span>30 minutes prévues</span>
+              </div>
+            </div>
+          </mat-card-content>
+          
+          <mat-card-actions>
+            <button mat-raised-button color="primary" (click)="joinConsultation(consultation)" 
+                    [disabled]="!canJoin(consultation)">
+              <mat-icon>video_call</mat-icon>
+              Rejoindre
+            </button>
+            
+            <button mat-button color="warn" (click)="cancelConsultation(consultation)" 
+                    *ngIf="canCancel(consultation)">
+              <mat-icon>cancel</mat-icon>
+              Annuler
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </mat-tab>
+
+    <!-- Past Consultations -->
+    <mat-tab label="Historique" [badgeContent]="pastConsultations.length">
+      <div class="consultations-grid">
+        <mat-card *ngFor="let consultation of pastConsultations" class="consultation-card">
+          <mat-card-header>
+            <mat-icon mat-card-avatar [color]="getStatusColor(consultation.status)">
+              {{ getTypeIcon(consultation.type) }}
+            </mat-icon>
+            <mat-card-title>
+              {{ userRoles.includes('DOCTOR') ? consultation.patientName : consultation.doctorName }}
+            </mat-card-title>
+            <mat-card-subtitle>{{ formatDateTime(consultation.scheduledTime) }}</mat-card-subtitle>
+            <div class="card-actions">
+              <mat-chip [color]="getStatusColor(consultation.status)" selected>
+                {{ getStatusLabel(consultation.status) }}
+              </mat-chip>
+            </div>
+          </mat-card-header>
+          
+          <mat-card-content>
+            <div class="consultation-info">
+              <div class="info-row" *ngIf="consultation.duration">
+                <mat-icon>schedule</mat-icon>
+                <span>{{ consultation.duration }} minutes</span>
+              </div>
+              <div class="info-row">
+                <mat-icon>videocam</mat-icon>
+                <span>Consultation vidéo</span>
+              </div>
+            </div>
+          </mat-card-content>
+          
+          <mat-card-actions>
+            <button mat-button color="primary">
+              <mat-icon>description</mat-icon>
+              Voir le rapport
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+
+  <!-- Loading Spinner -->
+  <div class="loading-spinner" *ngIf="loading">
+    <mat-spinner></mat-spinner>
+  </div>
+</div>
