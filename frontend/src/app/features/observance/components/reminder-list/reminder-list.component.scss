@@ -1,0 +1,156 @@
+.reminders-card {
+  margin-bottom: 24px;
+}
+
+.reminders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.reminder-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  transition: all 0.2s;
+  
+  &.inactive {
+    opacity: 0.6;
+    background-color: #f5f5f5;
+  }
+  
+  &.upcoming {
+    border-color: #ff9800;
+    background-color: #fff8e1;
+  }
+  
+  .reminder-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: #e3f2fd;
+    
+    mat-icon {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+  }
+  
+  .reminder-info {
+    flex: 1;
+    
+    .medication-details {
+      margin-bottom: 8px;
+      
+      h3 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 500;
+      }
+      
+      p {
+        margin: 4px 0 0 0;
+        color: #666;
+        font-size: 0.875rem;
+      }
+    }
+    
+    .reminder-schedule {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      
+      .schedule-item {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 0.875rem;
+        color: #666;
+        
+        &.next-reminder {
+          font-weight: 500;
+          
+          &.upcoming {
+            color: #ff9800;
+          }
+        }
+        
+        mat-icon {
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+        }
+      }
+    }
+  }
+  
+  .reminder-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+.settings-card {
+  .settings-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    
+    .setting-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      
+      mat-icon {
+        color: #666;
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+      }
+      
+      .setting-info {
+        flex: 1;
+        
+        h4 {
+          margin: 0 0 4px 0;
+          font-size: 1rem;
+          font-weight: 500;
+        }
+        
+        p {
+          margin: 0;
+          color: #666;
+          font-size: 0.875rem;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .reminder-item {
+    flex-direction: column;
+    align-items: stretch;
+    
+    .reminder-info .reminder-schedule {
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .reminder-controls {
+      justify-content: space-between;
+      width: 100%;
+    }
+  }
+}

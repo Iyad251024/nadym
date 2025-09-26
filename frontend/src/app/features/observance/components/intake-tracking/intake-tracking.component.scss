@@ -1,0 +1,164 @@
+.schedule-card {
+  margin-bottom: 24px;
+}
+
+.intake-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.intake-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  transition: all 0.2s;
+  
+  &.overdue {
+    border-color: #f44336;
+    background-color: #ffebee;
+  }
+  
+  .intake-info {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    .medication-details {
+      h3 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 500;
+      }
+      
+      p {
+        margin: 4px 0 0 0;
+        color: #666;
+        font-size: 0.875rem;
+      }
+    }
+    
+    .time-info {
+      text-align: right;
+      
+      .scheduled-time,
+      .actual-time {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin-bottom: 4px;
+        
+        mat-icon {
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+        }
+        
+        span {
+          font-size: 0.875rem;
+        }
+      }
+      
+      .actual-time {
+        color: #4caf50;
+      }
+    }
+  }
+  
+  .intake-status {
+    mat-chip {
+      mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+        margin-right: 4px;
+      }
+    }
+  }
+  
+  .intake-actions {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .intake-notes,
+  .side-effects {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding: 8px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+  
+  .side-effects {
+    background-color: #fff3e0;
+    color: #f57c00;
+  }
+}
+
+.quick-record-card {
+  .quick-form {
+    .form-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+      
+      mat-form-field {
+        flex: 1;
+      }
+    }
+    
+    .full-width {
+      width: 100%;
+      margin-bottom: 16px;
+    }
+    
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .intake-item {
+    flex-direction: column;
+    align-items: stretch;
+    
+    .intake-info {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+      
+      .time-info {
+        text-align: left;
+      }
+    }
+    
+    .intake-actions {
+      width: 100%;
+      
+      button {
+        flex: 1;
+      }
+    }
+  }
+  
+  .quick-form .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+}
