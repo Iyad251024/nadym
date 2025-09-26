@@ -30,4 +30,4 @@ if [ ! -f .mvn/wrapper/maven-wrapper.jar ]; then
 fi
 
 # Execute Maven
-exec "$JAVACMD" -classpath .mvn/wrapper/maven-wrapper.jar "-Dmaven.multiModuleProjectDirectory=$PWD" org.apache.maven.wrapper.MavenWrapperMain "$@"
+exec "$JAVACMD" -classpath .mvn/wrapper/maven-wrapper.jar "-Dmaven.multiModuleProjectDirectory=$PWD\" org.apache.maven.wrapper.MavenWrapperMain "$@"
