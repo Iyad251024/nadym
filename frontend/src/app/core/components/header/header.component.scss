@@ -1,0 +1,25 @@
+.nav-header {
+  background: #1976d2;
+  color: white;
+  
+  .nav-title {
+    font-size: 1.25rem;
+    font-weight: 500;
+  }
+  
+  .nav-spacer {
+    flex: 1 1 auto;
+  }
+  
+  .user-info {
+    margin-right: 16px;
+    font-size: 0.875rem;
+    opacity: 0.9;
+  }
+}
+
+@media (max-width: 768px) {
+  .user-info {
+    display: none;
+  }
+}

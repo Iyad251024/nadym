@@ -1,0 +1,152 @@
+<div class="page-header">
+  <div class="container">
+    <div class="header-actions">
+      <button mat-icon-button (click)="onCancel()" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="header-content">
+        <h1>{{ isEditMode ? 'Modifier' : 'Nouveau' }} patient</h1>
+        <p>Dossier patient</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="form-container">
+    <form [formGroup]="patientForm" (ngSubmit)="onSubmit()" *ngIf="!loading">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Informations personnelles</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Prénom</mat-label>
+              <input matInput formControlName="firstName" placeholder="Prénom">
+              <mat-error>{{ getErrorMessage('firstName') }}</mat-error>
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline">
+              <mat-label>Nom</mat-label>
+              <input matInput formControlName="lastName" placeholder="Nom de famille">
+              <mat-error>{{ getErrorMessage('lastName') }}</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Email</mat-label>
+              <input matInput type="email" formControlName="email" placeholder="email@exemple.com">
+              <mat-error>{{ getErrorMessage('email') }}</mat-error>
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline">
+              <mat-label>Téléphone</mat-label>
+              <input matInput formControlName="phone" placeholder="01 23 45 67 89">
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Date de naissance</mat-label>
+              <input matInput type="date" formControlName="dateOfBirth">
+              <mat-error>{{ getErrorMessage('dateOfBirth') }}</mat-error>
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline">
+              <mat-label>Genre</mat-label>
+              <mat-select formControlName="gender">
+                <mat-option *ngFor="let gender of genders" [value]="gender.value">
+                  {{ gender.label }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Adresse</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Adresse</mat-label>
+            <input matInput formControlName="address" placeholder="123 Rue de la Paix">
+          </mat-form-field>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Ville</mat-label>
+              <input matInput formControlName="city" placeholder="Paris">
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline">
+              <mat-label>Code postal</mat-label>
+              <input matInput formControlName="postalCode" placeholder="75001">
+            </mat-form-field>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Contact d'urgence</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Nom du contact</mat-label>
+              <input matInput formControlName="emergencyContactName" placeholder="Nom complet">
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline">
+              <mat-label>Téléphone du contact</mat-label>
+              <input matInput formControlName="emergencyContactPhone" placeholder="01 23 45 67 89">
+            </mat-form-field>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Informations médicales</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Antécédents médicaux</mat-label>
+            <textarea matInput formControlName="medicalHistory" rows="3" 
+                      placeholder="Historique médical du patient"></textarea>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Allergies</mat-label>
+            <textarea matInput formControlName="allergies" rows="2" 
+                      placeholder="Allergies connues"></textarea>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Médicaments actuels</mat-label>
+            <textarea matInput formControlName="currentMedications" rows="3" 
+                      placeholder="Médicaments en cours"></textarea>
+          </mat-form-field>
+        </mat-card-content>
+      </mat-card>
+
+      <div class="form-actions">
+        <button mat-button type="button" (click)="onCancel()">
+          Annuler
+        </button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="patientForm.invalid">
+          {{ isEditMode ? 'Mettre à jour' : 'Créer' }} le patient
+        </button>
+      </div>
+    </form>
+
+    <div class="loading-spinner" *ngIf="loading">
+      <mat-spinner></mat-spinner>
+      <p>{{ isEditMode ? 'Chargement du patient...' : 'Enregistrement en cours...' }}</p>
+    </div>
+  </div>
+</div>

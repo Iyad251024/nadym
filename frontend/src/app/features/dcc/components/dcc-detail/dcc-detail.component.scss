@@ -1,0 +1,110 @@
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  
+  .back-button {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+  }
+  
+  .header-content {
+    flex: 1;
+  }
+}
+
+.patient-overview {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+  
+  .overview-card {
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      
+      .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        
+        .label {
+          font-weight: 500;
+          color: #666;
+          font-size: 0.875rem;
+        }
+        
+        .value {
+          font-weight: 400;
+        }
+      }
+    }
+  }
+  
+  .completion-card {
+    .completion-display {
+      text-align: center;
+      
+      .completion-circle {
+        margin-bottom: 16px;
+        
+        .completion-percentage {
+          font-size: 2rem;
+          font-weight: 300;
+          color: #1976d2;
+        }
+      }
+    }
+  }
+}
+
+.patient-details {
+  margin-bottom: 24px;
+  
+  .tab-content {
+    padding: 24px 0;
+    
+    .treatment-info {
+      margin-top: 16px;
+      padding: 16px;
+      background-color: #f8f9fa;
+      border-radius: 4px;
+      border-left: 3px solid #ff9800;
+      
+      h4 {
+        margin: 0 0 8px 0;
+        color: #333;
+      }
+      
+      p {
+        margin: 0;
+        color: #555;
+      }
+    }
+  }
+}
+
+.action-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+@media (max-width: 768px) {
+  .patient-overview {
+    grid-template-columns: 1fr;
+    
+    .overview-card .info-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  .header-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}

@@ -1,0 +1,53 @@
+.prescriptions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.prescription-card {
+  .mat-mdc-card-header {
+    position: relative;
+    
+    .card-actions {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+    }
+  }
+}
+
+.prescription-info {
+  .info-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    color: #666;
+    
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+  
+  .medications {
+    h4 {
+      margin: 0 0 8px 0;
+      color: #333;
+      font-weight: 500;
+    }
+    
+    mat-chip {
+      margin-right: 8px;
+      margin-bottom: 4px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .prescriptions-grid {
+    grid-template-columns: 1fr;
+  }
+}

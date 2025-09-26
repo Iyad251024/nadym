@@ -1,0 +1,43 @@
+<div class="page-header">
+  <div class="container">
+    <h1>Rendez-vous</h1>
+    <p>Gestion des rendez-vous patients</p>
+  </div>
+</div>
+
+<div class="container">
+  <div class="appointments-grid">
+    <mat-card *ngFor="let appointment of appointments" class="appointment-card">
+      <mat-card-header>
+        <mat-card-title>{{ appointment.patientName }}</mat-card-title>
+        <mat-card-subtitle>{{ appointment.doctorName }}</mat-card-subtitle>
+        <div class="card-actions">
+          <mat-chip [color]="getStatusColor(appointment.status)" selected>
+            {{ getStatusLabel(appointment.status) }}
+          </mat-chip>
+        </div>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <div class="appointment-info">
+          <div class="info-row">
+            <mat-icon>event</mat-icon>
+            <span>{{ appointment.date }} à {{ appointment.time }}</span>
+          </div>
+          <div class="info-row">
+            <mat-icon>medical_services</mat-icon>
+            <span>{{ appointment.type }}</span>
+          </div>
+          <div class="info-row">
+            <mat-icon>description</mat-icon>
+            <span>{{ appointment.reason }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="loading-spinner" *ngIf="loading">
+    <mat-spinner></mat-spinner>
+  </div>
+</div>

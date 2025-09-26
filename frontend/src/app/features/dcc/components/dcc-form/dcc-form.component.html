@@ -1,0 +1,143 @@
+<div class="page-header">
+  <div class="container">
+    <div class="header-actions">
+      <button mat-icon-button (click)="onCancel()" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="header-content">
+        <h1>{{ isEditMode ? 'Modifier' : 'Nouveau' }} DCC</h1>
+        <p>Dossier Communicant en Cancérologie</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="form-container">
+    <form [formGroup]="dccForm" (ngSubmit)="onSubmit()" *ngIf="!loading">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Informations patient</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Nom du patient</mat-label>
+              <input matInput formControlName="patientName" placeholder="Nom complet">
+              <mat-error>{{ getErrorMessage('patientName') }}</mat-error>
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline">
+              <mat-label>Âge</mat-label>
+              <input matInput type="number" formControlName="patientAge" placeholder="Âge">
+              <mat-error>{{ getErrorMessage('patientAge') }}</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Diagnostic</mat-label>
+              <input matInput formControlName="diagnosis" placeholder="Diagnostic principal">
+              <mat-error>{{ getErrorMessage('diagnosis') }}</mat-error>
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline">
+              <mat-label>Stade</mat-label>
+              <input matInput formControlName="stage" placeholder="Stade TNM">
+              <mat-error>{{ getErrorMessage('stage') }}</mat-error>
+            </mat-form-field>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Traitement et suivi</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Phase de traitement</mat-label>
+              <mat-select formControlName="treatmentPhase">
+                <mat-option *ngFor="let phase of treatmentPhases" [value]="phase.value">
+                  {{ phase.label }}
+                </mat-option>
+              </mat-select>
+              <mat-error>{{ getErrorMessage('treatmentPhase') }}</mat-error>
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline">
+              <mat-label>Niveau de risque</mat-label>
+              <mat-select formControlName="riskLevel">
+                <mat-option *ngFor="let risk of riskLevels" [value]="risk.value">
+                  {{ risk.label }}
+                </mat-option>
+              </mat-select>
+              <mat-error>{{ getErrorMessage('riskLevel') }}</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Médecin référent</mat-label>
+              <input matInput formControlName="assignedDoctor" placeholder="Dr. Nom">
+              <mat-error>{{ getErrorMessage('assignedDoctor') }}</mat-error>
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline">
+              <mat-label>Infirmier(ère) référent(e)</mat-label>
+              <input matInput formControlName="assignedNurse" placeholder="Inf. Nom (optionnel)">
+            </mat-form-field>
+          </div>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Traitement actuel</mat-label>
+            <textarea matInput formControlName="currentTreatment" rows="3" 
+                      placeholder="Protocole de traitement en cours"></textarea>
+            <mat-error>{{ getErrorMessage('currentTreatment') }}</mat-error>
+          </mat-form-field>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Historique et observations</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Antécédents médicaux</mat-label>
+            <textarea matInput formControlName="medicalHistory" rows="4" 
+                      placeholder="Historique médical du patient"></textarea>
+            <mat-error>{{ getErrorMessage('medicalHistory') }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Effets secondaires observés</mat-label>
+            <textarea matInput formControlName="sideEffects" rows="3" 
+                      placeholder="Effets secondaires du traitement (optionnel)"></textarea>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Notes additionnelles</mat-label>
+            <textarea matInput formControlName="notes" rows="3" 
+                      placeholder="Notes et observations (optionnel)"></textarea>
+          </mat-form-field>
+        </mat-card-content>
+      </mat-card>
+
+      <div class="form-actions">
+        <button mat-button type="button" (click)="onCancel()">
+          Annuler
+        </button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="dccForm.invalid">
+          {{ isEditMode ? 'Mettre à jour' : 'Créer' }} le DCC
+        </button>
+      </div>
+    </form>
+
+    <div class="loading-spinner" *ngIf="loading">
+      <mat-spinner></mat-spinner>
+      <p>{{ isEditMode ? 'Chargement du dossier...' : 'Enregistrement en cours...' }}</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,136 @@
+<div class="page-header">
+  <div class="container">
+    <div class="header-actions">
+      <button mat-icon-button (click)="goBack()" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="header-content">
+        <h1>DCC - {{ patient?.patientName }}</h1>
+        <p>Dossier Communicant en Cancérologie</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container" *ngIf="!loading && patient">
+  <div class="patient-overview">
+    <mat-card class="overview-card">
+      <mat-card-header>
+        <mat-card-title>Informations générales</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">Patient:</span>
+            <span class="value">{{ patient.patientName }}, {{ patient.patientAge }} ans</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Diagnostic:</span>
+            <span class="value">{{ patient.diagnosis }} - {{ patient.stage }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Phase de traitement:</span>
+            <span class="value">{{ getTreatmentPhaseLabel(patient.treatmentPhase) }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Niveau de risque:</span>
+            <mat-chip [color]="getRiskLevelColor(patient.riskLevel)" selected>
+              {{ getRiskLevelLabel(patient.riskLevel) }}
+            </mat-chip>
+          </div>
+          <div class="info-item">
+            <span class="label">Médecin référent:</span>
+            <span class="value">{{ patient.assignedDoctor }}</span>
+          </div>
+          <div class="info-item" *ngIf="patient.assignedNurse">
+            <span class="label">Infirmier(ère):</span>
+            <span class="value">{{ patient.assignedNurse }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="completion-card">
+      <mat-card-header>
+        <mat-card-title>Complétude du dossier</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="completion-display">
+          <div class="completion-circle">
+            <span class="completion-percentage">{{ patient.completionRate }}%</span>
+          </div>
+          <mat-progress-bar 
+            mode="determinate" 
+            [value]="patient.completionRate"
+            color="primary">
+          </mat-progress-bar>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="patient-details">
+    <mat-tab-group>
+      <mat-tab label="Historique médical">
+        <div class="tab-content">
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>Antécédents médicaux</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <p>{{ patient.medicalHistory }}</p>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Traitement actuel">
+        <div class="tab-content">
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>Protocole de traitement</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <p>{{ patient.currentTreatment }}</p>
+              <div class="treatment-info" *ngIf="patient.sideEffects">
+                <h4>Effets secondaires observés:</h4>
+                <p>{{ patient.sideEffects }}</p>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Suivi">
+        <div class="tab-content">
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>Dernière mise à jour</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <p><strong>Date:</strong> {{ formatDateTime(patient.lastUpdate) }}</p>
+              <div *ngIf="patient.nextAppointment">
+                <p><strong>Prochain rendez-vous:</strong> {{ formatDateTime(patient.nextAppointment) }}</p>
+              </div>
+              <div *ngIf="patient.notes">
+                <h4>Notes:</h4>
+                <p>{{ patient.notes }}</p>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+
+  <div class="action-buttons" *ngIf="userRoles.includes('DOCTOR')">
+    <button mat-raised-button color="primary" (click)="editPatient()">
+      <mat-icon>edit</mat-icon>
+      Modifier le dossier
+    </button>
+  </div>
+</div>
+
+<div class="loading-spinner" *ngIf="loading">
+  <mat-spinner></mat-spinner>
+</div>
