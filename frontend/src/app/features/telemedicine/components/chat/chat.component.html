@@ -1,0 +1,143 @@
+<div class="chat-container">
+  <!-- Chat Sidebar -->
+  <div class="chat-sidebar">
+    <div class="sidebar-header">
+      <h3>Messages</h3>
+      <button mat-icon-button>
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+    
+    <div class="chat-rooms">
+      <div *ngFor="let room of chatRooms" 
+           class="chat-room-item" 
+           [class.active]="selectedRoom?.id === room.id"
+           (click)="selectRoom(room)">
+        
+        <div class="room-avatar">
+          <mat-icon>{{ room.participants.length > 2 ? 'groups' : 'person' }}</mat-icon>
+        </div>
+        
+        <div class="room-info">
+          <div class="room-name">{{ room.name }}</div>
+          <div class="last-message">{{ room.lastMessage }}</div>
+        </div>
+        
+        <div class="room-meta">
+          <div class="last-time">{{ formatLastMessageTime(room.lastMessageTime || '') }}</div>
+          <div class="unread-badge" *ngIf="room.unreadCount > 0">
+            {{ room.unreadCount }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat Main -->
+  <div class="chat-main" *ngIf="selectedRoom">
+    <!-- Chat Header -->
+    <div class="chat-header">
+      <div class="chat-info">
+        <h3>{{ selectedRoom.name }}</h3>
+        <p>{{ selectedRoom.participants.join(', ') }}</p>
+      </div>
+      
+      <div class="chat-actions">
+        <button mat-icon-button matTooltip="Appel vidéo">
+          <mat-icon>video_call</mat-icon>
+        </button>
+        <button mat-icon-button matTooltip="Informations">
+          <mat-icon>info</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    <div class="messages-container" #messagesContainer>
+      <div class="messages-list">
+        <div *ngFor="let message of messages" 
+             class="message-item" 
+             [class.my-message]="isMyMessage(message)">
+          
+          <div class="message-avatar" *ngIf="!isMyMessage(message)">
+            <mat-icon [style.color]="getSenderTypeColor(message.senderType)">
+              {{ getSenderTypeIcon(message.senderType) }}
+            </mat-icon>
+          </div>
+          
+          <div class="message-content">
+            <div class="message-header" *ngIf="!isMyMessage(message)">
+              <span class="sender-name">{{ message.senderName }}</span>
+              <span class="message-time">{{ formatTime(message.timestamp) }}</span>
+            </div>
+            
+            <div class="message-bubble" [class.my-bubble]="isMyMessage(message)">
+              <!-- Text Message -->
+              <div *ngIf="message.messageType === 'text'" class="text-message">
+                {{ message.content }}
+              </div>
+              
+              <!-- File Message -->
+              <div *ngIf="message.messageType === 'file'" class="file-message">
+                <div class="file-info">
+                  <mat-icon>attach_file</mat-icon>
+                  <div class="file-details">
+                    <span class="file-name">{{ message.fileName }}</span>
+                    <span class="file-action">{{ message.content }}</span>
+                  </div>
+                </div>
+                <button mat-icon-button (click)="downloadFile(message)" matTooltip="Télécharger">
+                  <mat-icon>download</mat-icon>
+                </button>
+              </div>
+              
+              <div class="message-time" *ngIf="isMyMessage(message)">
+                {{ formatTime(message.timestamp) }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Message Input -->
+    <div class="message-input">
+      <form [formGroup]="messageForm" (ngSubmit)="sendMessage()" class="input-form">
+        <input #fileInput type="file" (change)="onFileSelected($event)" style="display: none">
+        
+        <button type="button" mat-icon-button (click)="openFileDialog()" matTooltip="Joindre un fichier">
+          <mat-icon>attach_file</mat-icon>
+        </button>
+        
+        <mat-form-field appearance="outline" class="message-field">
+          <input matInput 
+                 formControlName="message" 
+                 placeholder="Tapez votre message..."
+                 (keydown.enter)="sendMessage()">
+        </mat-form-field>
+        
+        <button type="submit" 
+                mat-icon-button 
+                color="primary" 
+                [disabled]="messageForm.invalid"
+                matTooltip="Envoyer">
+          <mat-icon>send</mat-icon>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- No Room Selected -->
+  <div class="no-room-selected" *ngIf="!selectedRoom">
+    <div class="empty-state">
+      <mat-icon>chat</mat-icon>
+      <h3>Sélectionnez une conversation</h3>
+      <p>Choisissez une conversation dans la liste pour commencer à échanger</p>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-spinner" *ngIf="loading">
+    <mat-spinner></mat-spinner>
+  </div>
+</div>

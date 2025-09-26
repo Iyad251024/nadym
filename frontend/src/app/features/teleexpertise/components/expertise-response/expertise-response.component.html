@@ -1,0 +1,224 @@
+<div class="page-header">
+  <div class="container">
+    <div class="header-actions">
+      <button mat-icon-button (click)="goBack()" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="header-content">
+        <h1>Réponse d'expertise</h1>
+        <p>Avis spécialisé - {{ expertiseRequest?.specialty }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container" *ngIf="!loading && expertiseRequest">
+  <!-- Request Overview -->
+  <div class="request-overview">
+    <mat-card class="overview-card">
+      <mat-card-header>
+        <mat-card-title>Informations de la demande</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">Patient:</span>
+            <span class="value">{{ expertiseRequest.patientName }}, {{ expertiseRequest.patientAge }} ans</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Spécialité:</span>
+            <span class="value">{{ expertiseRequest.specialty }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Médecin demandeur:</span>
+            <span class="value">{{ expertiseRequest.requestingDoctor }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Expert:</span>
+            <span class="value">{{ expertiseRequest.expertName }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Urgence:</span>
+            <mat-chip [color]="getUrgencyColor(expertiseRequest.urgency)" selected>
+              {{ getUrgencyLabel(expertiseRequest.urgency) }}
+            </mat-chip>
+          </div>
+          <div class="info-item">
+            <span class="label">Statut:</span>
+            <mat-chip [color]="getStatusColor(expertiseRequest.status)" selected>
+              {{ getStatusLabel(expertiseRequest.status) }}
+            </mat-chip>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="timeline-card">
+      <mat-card-header>
+        <mat-card-title>Chronologie</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="timeline">
+          <div class="timeline-item">
+            <mat-icon>send</mat-icon>
+            <div class="timeline-content">
+              <strong>Demande envoyée</strong>
+              <small>{{ formatDateTime(expertiseRequest.requestDate) }}</small>
+            </div>
+          </div>
+          <div class="timeline-item" *ngIf="expertiseRequest.responseDate">
+            <mat-icon>check_circle</mat-icon>
+            <div class="timeline-content">
+              <strong>Réponse reçue</strong>
+              <small>{{ formatDateTime(expertiseRequest.responseDate) }}</small>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Detailed Content -->
+  <div class="response-content">
+    <mat-tab-group>
+      <!-- Clinical Question -->
+      <mat-tab label="Question clinique">
+        <div class="tab-content">
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>Question posée</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <p class="clinical-question">{{ expertiseRequest.clinicalQuestion }}</p>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>Contexte patient</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="patient-context">
+                <div class="context-section">
+                  <h4>Antécédents médicaux</h4>
+                  <p>{{ expertiseRequest.patientHistory }}</p>
+                </div>
+                
+                <div class="context-section" *ngIf="expertiseRequest.currentTreatment">
+                  <h4>Traitement actuel</h4>
+                  <p>{{ expertiseRequest.currentTreatment }}</p>
+                </div>
+                
+                <div class="context-section">
+                  <h4>Examen clinique</h4>
+                  <p>{{ expertiseRequest.examinationFindings }}</p>
+                </div>
+                
+                <div class="context-section" *ngIf="expertiseRequest.diagnosticResults">
+                  <h4>Examens complémentaires</h4>
+                  <p>{{ expertiseRequest.diagnosticResults }}</p>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <!-- Expert Response -->
+      <mat-tab label="Réponse de l'expert" *ngIf="expertiseRequest.expertResponse">
+        <div class="tab-content">
+          <mat-card class="expert-response-card">
+            <mat-card-header>
+              <mat-card-title>Avis de {{ expertiseRequest.expertName }}</mat-card-title>
+              <mat-card-subtitle>{{ expertiseRequest.specialty }}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="expert-response">
+                <h4>Analyse clinique</h4>
+                <p>{{ expertiseRequest.expertResponse }}</p>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="recommendations-card" *ngIf="expertiseRequest.recommendations">
+            <mat-card-header>
+              <mat-card-title>Recommandations</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="recommendations">
+                <ol>
+                  <li *ngFor="let recommendation of formatRecommendations(expertiseRequest.recommendations)">
+                    {{ recommendation }}
+                  </li>
+                </ol>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card *ngIf="expertiseRequest.additionalNotes">
+            <mat-card-header>
+              <mat-card-title>Notes complémentaires</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <p>{{ expertiseRequest.additionalNotes }}</p>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <!-- Summary -->
+      <mat-tab label="Synthèse">
+        <div class="tab-content">
+          <mat-card class="synthesis-card">
+            <mat-card-header>
+              <mat-card-title>Synthèse de l'expertise</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="synthesis-content">
+                <div class="synthesis-section">
+                  <h4>Diagnostic retenu</h4>
+                  <p>Fibrillation auriculaire paroxystique avec facteurs de risque cardiovasculaires</p>
+                </div>
+                
+                <div class="synthesis-section">
+                  <h4>Conduite à tenir immédiate</h4>
+                  <ul>
+                    <li>Initiation anticoagulation par AOD</li>
+                    <li>Optimisation du contrôle tensionnel</li>
+                    <li>Surveillance rythmique</li>
+                  </ul>
+                </div>
+                
+                <div class="synthesis-section">
+                  <h4>Suivi recommandé</h4>
+                  <ul>
+                    <li>Consultation cardiologique dans 6 semaines</li>
+                    <li>Holter ECG 24h dans 3 mois</li>
+                    <li>Suivi médecine générale tous les 3 mois</li>
+                  </ul>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="action-buttons">
+    <button mat-raised-button color="primary" (click)="printResponse()">
+      <mat-icon>print</mat-icon>
+      Imprimer
+    </button>
+    
+    <button mat-raised-button color="accent" (click)="exportToPdf()">
+      <mat-icon>picture_as_pdf</mat-icon>
+      Exporter PDF
+    </button>
+  </div>
+</div>
+
+<div class="loading-spinner" *ngIf="loading">
+  <mat-spinner></mat-spinner>
+</div>

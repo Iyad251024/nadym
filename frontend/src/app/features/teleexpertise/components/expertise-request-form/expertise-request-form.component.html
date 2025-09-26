@@ -1,0 +1,170 @@
+<div class="page-header">
+  <div class="container">
+    <div class="header-actions">
+      <button mat-icon-button (click)="onCancel()" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="header-content">
+        <h1>Nouvelle demande d'expertise</h1>
+        <p>Demande d'avis spécialisé</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="form-container">
+    <form [formGroup]="expertiseForm" (ngSubmit)="onSubmit()" *ngIf="!loading">
+      <!-- Patient and Specialty -->
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Patient et spécialité</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Patient</mat-label>
+              <mat-select formControlName="patientId">
+                <mat-option *ngFor="let patient of patients" [value]="patient.id">
+                  {{ patient.name }}, {{ patient.age }} ans
+                  <span *ngIf="patient.diagnosis"> - {{ patient.diagnosis }}</span>
+                </mat-option>
+              </mat-select>
+              <mat-error>{{ getErrorMessage('patientId') }}</mat-error>
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline">
+              <mat-label>Spécialité demandée</mat-label>
+              <mat-select formControlName="specialty">
+                <mat-option *ngFor="let specialty of specialties" [value]="specialty.value">
+                  {{ specialty.label }}
+                </mat-option>
+              </mat-select>
+              <mat-error>{{ getErrorMessage('specialty') }}</mat-error>
+            </mat-form-field>
+          </div>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Niveau d'urgence</mat-label>
+            <mat-select formControlName="urgency">
+              <mat-option *ngFor="let urgency of urgencyLevels" [value]="urgency.value">
+                <div class="urgency-option">
+                  <span class="urgency-label">{{ urgency.label }}</span>
+                  <small class="urgency-description">{{ urgency.description }}</small>
+                </div>
+              </mat-option>
+            </mat-select>
+            <mat-error>{{ getErrorMessage('urgency') }}</mat-error>
+          </mat-form-field>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Clinical Question -->
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Question clinique</mat-card-title>
+          <mat-card-subtitle>Décrivez précisément votre demande d'avis</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Question clinique détaillée</mat-label>
+            <textarea matInput formControlName="clinicalQuestion" rows="4" 
+                      placeholder="Décrivez précisément la question clinique pour laquelle vous sollicitez un avis spécialisé..."></textarea>
+            <mat-hint>Minimum 20 caractères</mat-hint>
+            <mat-error>{{ getErrorMessage('clinicalQuestion') }}</mat-error>
+          </mat-form-field>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Patient Information -->
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Informations patient</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Antécédents et historique médical</mat-label>
+            <textarea matInput formControlName="patientHistory" rows="4" 
+                      placeholder="Antécédents médicaux, chirurgicaux, familiaux pertinents..."></textarea>
+            <mat-error>{{ getErrorMessage('patientHistory') }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Traitement actuel</mat-label>
+            <textarea matInput formControlName="currentTreatment" rows="3" 
+                      placeholder="Médicaments en cours, posologies, durée de traitement..."></textarea>
+          </mat-form-field>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Clinical Findings -->
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Données cliniques</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Examen clinique</mat-label>
+            <textarea matInput formControlName="examinationFindings" rows="4" 
+                      placeholder="Résultats de l'examen physique, signes cliniques observés..."></textarea>
+            <mat-error>{{ getErrorMessage('examinationFindings') }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Résultats d'examens complémentaires</mat-label>
+            <textarea matInput formControlName="diagnosticResults" rows="4" 
+                      placeholder="Biologie, imagerie, explorations fonctionnelles..."></textarea>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Notes additionnelles</mat-label>
+            <textarea matInput formControlName="additionalNotes" rows="2" 
+                      placeholder="Informations complémentaires, contexte particulier..."></textarea>
+          </mat-form-field>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Summary -->
+      <mat-card class="summary-card" *ngIf="getSelectedPatient() && getSelectedSpecialty()">
+        <mat-card-header>
+          <mat-card-title>Résumé de la demande</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="summary-info">
+            <div class="summary-row">
+              <mat-icon>person</mat-icon>
+              <span><strong>Patient:</strong> {{ getSelectedPatient()?.name }}, {{ getSelectedPatient()?.age }} ans</span>
+            </div>
+            <div class="summary-row">
+              <mat-icon>medical_services</mat-icon>
+              <span><strong>Spécialité:</strong> {{ getSelectedSpecialty()?.label }}</span>
+            </div>
+            <div class="summary-row" *ngIf="getSelectedUrgency()">
+              <mat-icon>priority_high</mat-icon>
+              <span><strong>Urgence:</strong> 
+                <mat-chip [color]="getUrgencyColor(getSelectedUrgency()?.value)" selected>
+                  {{ getSelectedUrgency()?.label }}
+                </mat-chip>
+              </span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <div class="form-actions">
+        <button mat-button type="button" (click)="onCancel()">
+          Annuler
+        </button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="expertiseForm.invalid">
+          <mat-icon>send</mat-icon>
+          Envoyer la demande
+        </button>
+      </div>
+    </form>
+
+    <div class="loading-spinner" *ngIf="loading">
+      <mat-spinner></mat-spinner>
+      <p>Envoi de la demande...</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,98 @@
+<div class="video-call-container">
+  <!-- Call Header -->
+  <div class="call-header">
+    <div class="call-info">
+      <h2>{{ consultation.patientName }}</h2>
+      <p>Consultation avec {{ consultation.doctorName }}</p>
+      <div class="call-duration" *ngIf="isCallActive">
+        <mat-icon>schedule</mat-icon>
+        <span>{{ formatDuration(callDuration) }}</span>
+      </div>
+    </div>
+    
+    <div class="call-actions">
+      <button mat-icon-button (click)="openChat()" matTooltip="Chat">
+        <mat-icon>chat</mat-icon>
+      </button>
+      
+      <button mat-icon-button (click)="takeScreenshot()" matTooltip="Capture d'écran">
+        <mat-icon>camera_alt</mat-icon>
+      </button>
+      
+      <button mat-icon-button color="warn" (click)="endCall()" matTooltip="Raccrocher">
+        <mat-icon>call_end</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Video Container -->
+  <div class="video-container">
+    <!-- Remote Video (Main) -->
+    <div class="remote-video-container">
+      <video #remoteVideo autoplay playsinline class="remote-video"></video>
+      
+      <div class="video-overlay" *ngIf="!remoteStream">
+        <div class="waiting-message">
+          <mat-icon>person</mat-icon>
+          <p>En attente de connexion...</p>
+        </div>
+      </div>
+      
+      <!-- Local Video (Picture-in-Picture) -->
+      <div class="local-video-container">
+        <video #localVideo autoplay muted playsinline class="local-video" 
+               [class.video-off]="isVideoOff"></video>
+        
+        <div class="video-off-indicator" *ngIf="isVideoOff">
+          <mat-icon>videocam_off</mat-icon>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Call Controls -->
+  <div class="call-controls">
+    <div class="control-group">
+      <!-- Mute Button -->
+      <button mat-fab 
+              [color]="isMuted ? 'warn' : 'primary'" 
+              (click)="toggleMute()"
+              [matTooltip]="isMuted ? 'Activer le micro' : 'Couper le micro'">
+        <mat-icon>{{ isMuted ? 'mic_off' : 'mic' }}</mat-icon>
+      </button>
+
+      <!-- Video Button -->
+      <button mat-fab 
+              [color]="isVideoOff ? 'warn' : 'primary'" 
+              (click)="toggleVideo()"
+              [matTooltip]="isVideoOff ? 'Activer la caméra' : 'Couper la caméra'">
+        <mat-icon>{{ isVideoOff ? 'videocam_off' : 'videocam' }}</mat-icon>
+      </button>
+
+      <!-- Screen Share Button -->
+      <button mat-fab 
+              [color]="isScreenSharing ? 'accent' : 'primary'" 
+              (click)="toggleScreenShare()"
+              [matTooltip]="isScreenSharing ? 'Arrêter le partage' : 'Partager l\'écran'">
+        <mat-icon>{{ isScreenSharing ? 'stop_screen_share' : 'screen_share' }}</mat-icon>
+      </button>
+
+      <!-- End Call Button -->
+      <button mat-fab 
+              color="warn" 
+              (click)="endCall()"
+              matTooltip="Terminer l'appel"
+              class="end-call-btn">
+        <mat-icon>call_end</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Connection Status -->
+  <div class="connection-status" *ngIf="isCallActive">
+    <div class="status-indicator">
+      <div class="status-dot connected"></div>
+      <span>Connecté</span>
+    </div>
+  </div>
+</div>

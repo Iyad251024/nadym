@@ -1,0 +1,237 @@
+<div class="page-header">
+  <div class="container">
+    <div class="header-actions">
+      <button mat-icon-button (click)="goBack()" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="header-content">
+        <h1>{{ meeting?.title }}</h1>
+        <p>Réunion de Concertation Pluridisciplinaire</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container" *ngIf="!loading && meeting">
+  <!-- Meeting Overview -->
+  <div class="meeting-overview">
+    <mat-card class="overview-card">
+      <mat-card-header>
+        <mat-card-title>Informations générales</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">Patient:</span>
+            <span class="value">{{ meeting.patientName }}, {{ meeting.patientAge }} ans</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Pathologie:</span>
+            <span class="value">{{ meeting.pathology }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Organisateur:</span>
+            <span class="value">{{ meeting.organizer }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Statut:</span>
+            <mat-chip [color]="getStatusColor(meeting.status)" selected>
+              {{ getStatusLabel(meeting.status) }}
+            </mat-chip>
+          </div>
+          <div class="info-item">
+            <span class="label">Date programmée:</span>
+            <span class="value">{{ formatDateTime(meeting.scheduledDate) }}</span>
+          </div>
+          <div class="info-item" *ngIf="meeting.actualStartTime">
+            <span class="label">Durée réelle:</span>
+            <span class="value">{{ meeting.duration }} minutes</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="participants-card">
+      <mat-card-header>
+        <mat-card-title>Participants ({{ meeting.participants.length }})</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="participants-list">
+          <div *ngFor="let participant of meeting.participants" class="participant-item">
+            <div class="participant-info">
+              <div class="participant-name">{{ participant.name }}</div>
+              <div class="participant-specialty">{{ participant.specialty }}</div>
+            </div>
+            <div class="participant-badges">
+              <mat-chip [color]="getRoleColor(participant.role)" selected size="small">
+                {{ getRoleLabel(participant.role) }}
+              </mat-chip>
+              <mat-chip [color]="getAttendanceColor(participant.attendanceStatus)" selected size="small">
+                {{ getAttendanceLabel(participant.attendanceStatus) }}
+              </mat-chip>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Meeting Content -->
+  <div class="meeting-content">
+    <mat-tab-group>
+      <!-- Clinical Summary -->
+      <mat-tab label="Résumé clinique">
+        <div class="tab-content">
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>Présentation du cas</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <p class="clinical-summary">{{ meeting.clinicalSummary }}</p>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <!-- Decision -->
+      <mat-tab label="Décision RCP" *ngIf="meeting.decisionSummary">
+        <div class="tab-content">
+          <mat-card class="decision-card">
+            <mat-card-header>
+              <mat-card-title>Décision collégiale</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <p class="decision-summary">{{ meeting.decisionSummary }}</p>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="recommendations-card" *ngIf="meeting.recommendations">
+            <mat-card-header>
+              <mat-card-title>Recommandations thérapeutiques</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="recommendations">
+                <ol>
+                  <li *ngFor="let recommendation of formatRecommendations(meeting.recommendations)">
+                    {{ recommendation }}
+                  </li>
+                </ol>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card *ngIf="meeting.nextSteps">
+            <mat-card-header>
+              <mat-card-title>Prochaines étapes</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="next-steps">
+                <ul>
+                  <li *ngFor="let step of formatNextSteps(meeting.nextSteps)">
+                    {{ step }}
+                  </li>
+                </ul>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <!-- Participants Contributions -->
+      <mat-tab label="Contributions">
+        <div class="tab-content">
+          <div class="contributions-list">
+            <mat-card *ngFor="let participant of meeting.participants" 
+                      class="contribution-card"
+                      *ngIf="participant.contribution">
+              <mat-card-header>
+                <mat-card-title>{{ participant.name }}</mat-card-title>
+                <mat-card-subtitle>{{ participant.specialty }}</mat-card-subtitle>
+                <div class="participant-role">
+                  <mat-chip [color]="getRoleColor(participant.role)" selected>
+                    {{ getRoleLabel(participant.role) }}
+                  </mat-chip>
+                </div>
+              </mat-card-header>
+              <mat-card-content>
+                <p>{{ participant.contribution }}</p>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- Meeting Summary -->
+      <mat-tab label="Compte-rendu">
+        <div class="tab-content">
+          <mat-card class="report-card">
+            <mat-card-header>
+              <mat-card-title>Compte-rendu de RCP</mat-card-title>
+              <mat-card-subtitle>{{ formatDateTime(meeting.scheduledDate) }}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="report-content">
+                <div class="report-section">
+                  <h4>Patient</h4>
+                  <p>{{ meeting.patientName }}, {{ meeting.patientAge }} ans</p>
+                  <p><strong>Pathologie:</strong> {{ meeting.pathology }}</p>
+                </div>
+                
+                <div class="report-section">
+                  <h4>Participants</h4>
+                  <ul>
+                    <li *ngFor="let participant of meeting.participants">
+                      {{ participant.name }} ({{ participant.specialty }})
+                    </li>
+                  </ul>
+                </div>
+                
+                <div class="report-section">
+                  <h4>Résumé clinique</h4>
+                  <p>{{ meeting.clinicalSummary }}</p>
+                </div>
+                
+                <div class="report-section" *ngIf="meeting.decisionSummary">
+                  <h4>Décision</h4>
+                  <p>{{ meeting.decisionSummary }}</p>
+                </div>
+                
+                <div class="report-section" *ngIf="meeting.recommendations">
+                  <h4>Recommandations</h4>
+                  <ol>
+                    <li *ngFor="let recommendation of formatRecommendations(meeting.recommendations)">
+                      {{ recommendation }}
+                    </li>
+                  </ol>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="action-buttons">
+    <button mat-raised-button color="primary" (click)="editMeeting()" 
+            *ngIf="meeting?.status !== 'completed'">
+      <mat-icon>edit</mat-icon>
+      Modifier
+    </button>
+    
+    <button mat-raised-button color="accent" (click)="printReport()">
+      <mat-icon>print</mat-icon>
+      Imprimer
+    </button>
+    
+    <button mat-raised-button color="primary" (click)="exportToPdf()">
+      <mat-icon>picture_as_pdf</mat-icon>
+      Exporter PDF
+    </button>
+  </div>
+</div>
+
+<div class="loading-spinner" *ngIf="loading">
+  <mat-spinner></mat-spinner>
+</div>

@@ -1,0 +1,233 @@
+<div class="page-header">
+  <div class="container">
+    <div class="header-actions">
+      <button mat-icon-button (click)="onCancel()" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="header-content">
+        <h1>Nouvelle transcription</h1>
+        <p>Upload audio ou enregistrement direct</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="form-container">
+    <form [formGroup]="uploadForm" (ngSubmit)="onSubmit()" *ngIf="!loading">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Informations de consultation</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Patient</mat-label>
+              <mat-select formControlName="patientId">
+                <mat-option *ngFor="let patient of patients" [value]="patient.id">
+                  {{ patient.name }}, {{ patient.age }} ans
+                </mat-option>
+              </mat-select>
+              <mat-error>{{ getErrorMessage('patientId') }}</mat-error>
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline">
+              <mat-label>Date de consultation</mat-label>
+              <input matInput type="date" formControlName="consultationDate">
+              <mat-error>{{ getErrorMessage('consultationDate') }}</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Type de consultation</mat-label>
+              <mat-select formControlName="consultationType">
+                <mat-option value="routine">Consultation de routine</mat-option>
+                <mat-option value="follow_up">Suivi médical</mat-option>
+                <mat-option value="urgent">Consultation urgente</mat-option>
+                <mat-option value="specialist">Consultation spécialisée</mat-option>
+              </mat-select>
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline">
+              <mat-label>Langue</mat-label>
+              <mat-select formControlName="language">
+                <mat-option value="fr">Français</mat-option>
+                <mat-option value="en">Anglais</mat-option>
+                <mat-option value="es">Espagnol</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Notes préliminaires</mat-label>
+            <textarea matInput formControlName="notes" rows="2" 
+                      placeholder="Notes ou contexte pour la transcription (optionnel)"></textarea>
+          </mat-form-field>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Audio Upload/Recording -->
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Fichier audio</mat-card-title>
+          <mat-card-subtitle>Uploadez un fichier ou enregistrez directement</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <!-- File Upload -->
+          <div class="upload-section">
+            <div class="upload-area" *ngIf="!selectedFile">
+              <input #fileInput type="file" accept="audio/*" (change)="onFileSelected($event)" style="display: none">
+              <button type="button" mat-raised-button color="primary" (click)="fileInput.click()">
+                <mat-icon>upload_file</mat-icon>
+                Sélectionner un fichier audio
+              </button>
+              <p class="upload-hint">Formats supportés: MP3, WAV, M4A, OGG (max 100MB)</p>
+            </div>
+            
+            <div class="file-info" *ngIf="selectedFile">
+              <div class="file-details">
+                <mat-icon>audio_file</mat-icon>
+                <div class="file-meta">
+                  <strong>{{ selectedFile.name }}</strong>
+                  <small>{{ formatFileSize(selectedFile.size) }}</small>
+                </div>
+              </div>
+              <button type="button" mat-icon-button color="warn" (click)="removeFile()">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+
+          <!-- Recording -->
+          <div class="recording-section">
+            <div class="recording-divider">
+              <span>ou</span>
+            </div>
+            
+            <div class="recording-controls">
+              <button type="button" 
+                      mat-fab 
+                      [color]="isRecording ? 'warn' : 'accent'" 
+                      (click)="isRecording ? stopRecording() : startRecording()">
+                <mat-icon>{{ isRecording ? 'stop' : 'mic' }}</mat-icon>
+              </button>
+              
+              <div class="recording-info" *ngIf="isRecording">
+                <div class="recording-indicator">
+                  <div class="recording-dot"></div>
+                  <span>Enregistrement en cours</span>
+                </div>
+                <div class="recording-duration">{{ formatDuration(recordingDuration) }}</div>
+              </div>
+              
+              <div class="recording-hint" *ngIf="!isRecording">
+                <p>Cliquez pour commencer l'enregistrement</p>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- AI Processing Options -->
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Options de traitement IA</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="options-list">
+            <mat-slide-toggle formControlName="autoStructure" color="primary">
+              <span class="option-label">
+                <mat-icon>format_list_bulleted</mat-icon>
+                Structuration automatique des notes
+              </span>
+              <small>Organise la transcription en sections médicales structurées</small>
+            </mat-slide-toggle>
+            
+            <mat-slide-toggle formControlName="generateSummary" color="primary">
+              <span class="option-label">
+                <mat-icon>summarize</mat-icon>
+                Génération de résumé médical
+              </span>
+              <small>Crée un résumé concis de la consultation</small>
+            </mat-slide-toggle>
+            
+            <mat-slide-toggle formControlName="extractFindings" color="primary">
+              <span class="option-label">
+                <mat-icon>search</mat-icon>
+                Extraction des éléments clés
+              </span>
+              <small>Identifie automatiquement les éléments cliniques importants</small>
+            </mat-slide-toggle>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Summary Card -->
+      <mat-card class="summary-card" *ngIf="getSelectedPatient() && selectedFile">
+        <mat-card-header>
+          <mat-card-title>Résumé de la transcription</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="summary-info">
+            <div class="summary-row">
+              <mat-icon>person</mat-icon>
+              <span><strong>Patient:</strong> {{ getSelectedPatient()?.name }}, {{ getSelectedPatient()?.age }} ans</span>
+            </div>
+            <div class="summary-row">
+              <mat-icon>audio_file</mat-icon>
+              <span><strong>Fichier:</strong> {{ selectedFile.name }} ({{ formatFileSize(selectedFile.size) }})</span>
+            </div>
+            <div class="summary-row" *ngIf="uploadForm.get('consultationDate')?.value">
+              <mat-icon>event</mat-icon>
+              <span><strong>Date:</strong> {{ uploadForm.get('consultationDate')?.value | date:'fullDate':'':'fr' }}</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <div class="form-actions">
+        <button mat-button type="button" (click)="onCancel()">
+          Annuler
+        </button>
+        <button mat-raised-button color="primary" type="submit" 
+                [disabled]="uploadForm.invalid || !selectedFile">
+          <mat-icon>smart_toy</mat-icon>
+          Lancer la transcription
+        </button>
+      </div>
+    </form>
+
+    <!-- Upload Progress -->
+    <div class="upload-progress" *ngIf="loading">
+      <mat-card>
+        <mat-card-content>
+          <div class="progress-info">
+            <h3>Traitement en cours</h3>
+            <p>Upload et traitement IA de votre fichier audio...</p>
+          </div>
+          
+          <div class="progress-bar">
+            <mat-progress-bar mode="determinate" [value]="uploadProgress" color="primary"></mat-progress-bar>
+            <span class="progress-percentage">{{ uploadProgress }}%</span>
+          </div>
+          
+          <div class="progress-steps">
+            <div class="step" [class.active]="uploadProgress >= 30">
+              <mat-icon>upload</mat-icon>
+              <span>Upload du fichier</span>
+            </div>
+            <div class="step" [class.active]="uploadProgress >= 60">
+              <mat-icon>hearing</mat-icon>
+              <span>Transcription audio</span>
+            </div>
+            <div class="step" [class.active]="uploadProgress >= 90">
+              <mat-icon>smart_toy</mat-icon>
+              <span>Traitement IA</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

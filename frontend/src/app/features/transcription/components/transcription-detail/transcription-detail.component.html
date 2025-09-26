@@ -1,0 +1,276 @@
+<div class="page-header">
+  <div class="container">
+    <div class="header-actions">
+      <button mat-icon-button (click)="goBack()" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="header-content">
+        <h1>Transcription IA</h1>
+        <p>{{ transcription?.patientName }} - {{ transcription?.doctorName }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container" *ngIf="!loading && transcription">
+  <!-- Transcription Overview -->
+  <div class="transcription-overview">
+    <mat-card class="overview-card">
+      <mat-card-header>
+        <mat-card-title>Informations de la transcription</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">Patient:</span>
+            <span class="value">{{ transcription.patientName }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Médecin:</span>
+            <span class="value">{{ transcription.doctorName }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Date:</span>
+            <span class="value">{{ formatDateTime(transcription.date) }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Statut:</span>
+            <mat-chip [color]="getStatusColor(transcription.status)" selected>
+              {{ getStatusLabel(transcription.status) }}
+            </mat-chip>
+          </div>
+          <div class="info-item">
+            <span class="label">Durée:</span>
+            <span class="value">{{ transcription.duration }} minutes</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Langue:</span>
+            <span class="value">{{ transcription.languageDetected }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="quality-card">
+      <mat-card-header>
+        <mat-card-title>Qualité de la transcription</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="quality-metrics">
+          <div class="metric">
+            <div class="metric-label">Précision IA</div>
+            <div class="metric-value">
+              <mat-progress-bar 
+                mode="determinate" 
+                [value]="transcription.confidenceScore"
+                [color]="getConfidenceColor(transcription.confidenceScore)">
+              </mat-progress-bar>
+              <span class="percentage">{{ transcription.confidenceScore }}%</span>
+            </div>
+          </div>
+          
+          <div class="metric">
+            <div class="metric-label">Temps de traitement</div>
+            <div class="metric-value">
+              <span class="processing-time">{{ transcription.processingTime }}s</span>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Transcription Content -->
+  <div class="transcription-content">
+    <mat-tab-group>
+      <!-- Raw Transcription -->
+      <mat-tab label="Transcription brute">
+        <div class="tab-content">
+          <mat-card class="transcription-card">
+            <mat-card-header>
+              <mat-card-title>Transcription automatique</mat-card-title>
+              <mat-card-subtitle>Texte brut généré par l'IA</mat-card-subtitle>
+              <div class="card-actions">
+                <button mat-icon-button (click)="copyToClipboard(transcription.rawTranscription)" 
+                        matTooltip="Copier">
+                  <mat-icon>content_copy</mat-icon>
+                </button>
+              </div>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="transcription-text">
+                <pre>{{ transcription.rawTranscription }}</pre>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <!-- Structured Notes -->
+      <mat-tab label="Notes structurées">
+        <div class="tab-content">
+          <mat-card class="structured-notes-card">
+            <mat-card-header>
+              <mat-card-title>Notes médicales structurées</mat-card-title>
+              <mat-card-subtitle>Organisées par l'IA selon les standards médicaux</mat-card-subtitle>
+              <div class="card-actions">
+                <button mat-icon-button (click)="copyToClipboard(transcription.structuredNotes)" 
+                        matTooltip="Copier">
+                  <mat-icon>content_copy</mat-icon>
+                </button>
+              </div>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="structured-content">
+                <pre>{{ transcription.structuredNotes }}</pre>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <!-- Medical Summary -->
+      <mat-tab label="Résumé médical">
+        <div class="tab-content">
+          <mat-card class="summary-card">
+            <mat-card-header>
+              <mat-card-title>Résumé de consultation</mat-card-title>
+              <mat-card-subtitle>Synthèse générée par l'IA</mat-card-subtitle>
+              <div class="card-actions">
+                <button mat-icon-button (click)="copyToClipboard(transcription.medicalSummary)" 
+                        matTooltip="Copier">
+                  <mat-icon>content_copy</mat-icon>
+                </button>
+              </div>
+            </mat-card-header>
+            <mat-card-content>
+              <p class="medical-summary">{{ transcription.medicalSummary }}</p>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="findings-card">
+            <mat-card-header>
+              <mat-card-title>Éléments clés</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="key-findings">
+                <ul>
+                  <li *ngFor="let finding of formatKeyFindings(transcription.keyFindings)">
+                    {{ finding.replace('•', '').trim() }}
+                  </li>
+                </ul>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <!-- Recommendations -->
+      <mat-tab label="Recommandations">
+        <div class="tab-content">
+          <mat-card class="recommendations-card">
+            <mat-card-header>
+              <mat-card-title>Recommandations thérapeutiques</mat-card-title>
+              <mat-card-subtitle>Plan de traitement suggéré par l'IA</mat-card-subtitle>
+              <div class="card-actions">
+                <button mat-icon-button (click)="copyToClipboard(transcription.recommendations)" 
+                        matTooltip="Copier">
+                  <mat-icon>content_copy</mat-icon>
+                </button>
+              </div>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="recommendations">
+                <ol>
+                  <li *ngFor="let recommendation of formatRecommendations(transcription.recommendations)">
+                    {{ recommendation.replace(/^\d+\.\s*/, '') }}
+                  </li>
+                </ol>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <!-- Analysis -->
+      <mat-tab label="Analyse">
+        <div class="tab-content">
+          <mat-card class="analysis-card">
+            <mat-card-header>
+              <mat-card-title>Analyse de la transcription</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="analysis-content">
+                <div class="analysis-section">
+                  <h4>Qualité de la transcription</h4>
+                  <div class="quality-indicators">
+                    <div class="indicator">
+                      <span class="indicator-label">Précision globale:</span>
+                      <div class="indicator-value">
+                        <mat-progress-bar 
+                          mode="determinate" 
+                          [value]="transcription.confidenceScore"
+                          [color]="getConfidenceColor(transcription.confidenceScore)">
+                        </mat-progress-bar>
+                        <span>{{ transcription.confidenceScore }}%</span>
+                      </div>
+                    </div>
+                    
+                    <div class="indicator">
+                      <span class="indicator-label">Temps de traitement:</span>
+                      <span class="processing-time">{{ transcription.processingTime }}s</span>
+                    </div>
+                    
+                    <div class="indicator">
+                      <span class="indicator-label">Langue détectée:</span>
+                      <span>{{ transcription.languageDetected }}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="analysis-section">
+                  <h4>Statistiques du contenu</h4>
+                  <div class="content-stats">
+                    <div class="stat">
+                      <mat-icon>schedule</mat-icon>
+                      <span>{{ transcription.duration }} minutes d'audio</span>
+                    </div>
+                    <div class="stat">
+                      <mat-icon>text_fields</mat-icon>
+                      <span>{{ transcription.rawTranscription.split(' ').length }} mots transcrits</span>
+                    </div>
+                    <div class="stat">
+                      <mat-icon>psychology</mat-icon>
+                      <span>{{ formatKeyFindings(transcription.keyFindings).length }} éléments clés identifiés</span>
+                    </div>
+                    <div class="stat">
+                      <mat-icon>recommend</mat-icon>
+                      <span>{{ formatRecommendations(transcription.recommendations).length }} recommandations générées</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="action-buttons">
+    <button mat-raised-button color="primary" (click)="printTranscription()">
+      <mat-icon>print</mat-icon>
+      Imprimer
+    </button>
+    
+    <button mat-raised-button color="accent" (click)="exportToPdf()">
+      <mat-icon>picture_as_pdf</mat-icon>
+      Exporter PDF
+    </button>
+  </div>
+</div>
+
+<div class="loading-spinner" *ngIf="loading">
+  <mat-spinner></mat-spinner>
+</div>
