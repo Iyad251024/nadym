@@ -1,0 +1,3 @@
+# This is a binary file that would normally be downloaded by Maven
+# In a real environment, this would be the actual maven-wrapper.jar file
+# For this demo, we'll modify the Dockerfile to handle this properly

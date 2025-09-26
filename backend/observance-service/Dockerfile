@@ -2,22 +2,23 @@ FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
-# Copy Maven wrapper and pom.xml
-COPY mvnw .
-COPY .mvn .mvn
+# Install Maven directly instead of using wrapper
+RUN apt-get update && apt-get install -y maven && rm -rf /var/lib/apt/lists/*
+
+# Copy pom.xml first for dependency caching
 COPY pom.xml .
 
-# Make mvnw executable
-RUN chmod +x mvnw
+# Copy common module
+COPY ../common ../common
 
 # Download dependencies
-RUN ./mvnw dependency:go-offline -B
+RUN mvn dependency:go-offline -B
 
 # Copy source code
 COPY src ./src
 
 # Build application
-RUN ./mvnw clean package -DskipTests
+RUN mvn clean package -DskipTests
 
 # Run application
 EXPOSE 8083
