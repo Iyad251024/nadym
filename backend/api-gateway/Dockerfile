@@ -2,13 +2,16 @@ FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
+# Install curl for downloading Maven wrapper
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
 # Copy Maven wrapper and pom.xml
 COPY mvnw .
 COPY .mvn .mvn
 COPY pom.xml .
 
-# Copy common module
-COPY ../common ../common
+# Make mvnw executable
+RUN chmod +x mvnw
 
 # Download dependencies
 RUN ./mvnw dependency:go-offline -B

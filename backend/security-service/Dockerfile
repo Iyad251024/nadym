@@ -2,6 +2,9 @@ FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
+# Install curl for downloading Maven wrapper
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
 # Copy Maven wrapper and pom.xml
 COPY mvnw .
 COPY .mvn .mvn
