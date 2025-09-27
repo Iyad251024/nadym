@@ -15,6 +15,9 @@ RUN cd common && mvn clean install -DskipTests
 
 # Copy service files
 COPY api-gateway/pom.xml ./
+RUN mvn dependency:go-offline -B
+
+# Copy source code
 COPY api-gateway/src ./src
 
 # Build application

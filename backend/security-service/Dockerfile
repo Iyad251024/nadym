@@ -15,6 +15,9 @@ RUN cd common && mvn clean install -DskipTests
 
 # Copy service files
 COPY security-service/pom.xml ./
+RUN mvn dependency:go-offline -B
+
+# Copy source code
 COPY security-service/src ./src
 
 # Build application

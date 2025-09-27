@@ -15,6 +15,9 @@ RUN cd common && mvn clean install -DskipTests
 
 # Copy service files
 COPY observance-service/pom.xml ./
+RUN mvn dependency:go-offline -B
+
+# Copy source code
 COPY observance-service/src ./src
 
 # Build application
