@@ -35,11 +35,7 @@
   <!-- Transcription Tabs -->
   <mat-tab-group>
     <!-- Processing Transcriptions -->
-    <mat-tab label="En cours" *ngIf="processingTranscriptions.length > 0">
-      <ng-template mat-tab-label>
-        En cours
-        <span class="badge">({{ processingTranscriptions.length }})</span>
-      </ng-template>
+    <mat-tab label="En cours" [badgeContent]="processingTranscriptions.length" *ngIf="processingTranscriptions.length > 0">
       <div class="transcriptions-grid">
         <mat-card *ngFor="let transcription of processingTranscriptions" class="transcription-card processing">
           <mat-card-header>
@@ -72,11 +68,7 @@
     </mat-tab>
 
     <!-- Completed Transcriptions -->
-    <mat-tab label="Terminées">
-      <ng-template mat-tab-label>
-        Terminées
-        <span class="badge" *ngIf="completedTranscriptions.length > 0">({{ completedTranscriptions.length }})</span>
-      </ng-template>
+    <mat-tab label="Terminées" [badgeContent]="completedTranscriptions.length">
       <div class="transcriptions-grid">
         <mat-card *ngFor="let transcription of completedTranscriptions" class="transcription-card">
           <mat-card-header>
@@ -136,11 +128,7 @@
     </mat-tab>
 
     <!-- Failed Transcriptions -->
-    <mat-tab label="Échecs" *ngIf="failedTranscriptions.length > 0">
-      <ng-template mat-tab-label>
-        Échecs
-        <span class="badge">({{ failedTranscriptions.length }})</span>
-      </ng-template>
+    <mat-tab label="Échecs" [badgeContent]="failedTranscriptions.length" *ngIf="failedTranscriptions.length > 0">
       <div class="transcriptions-grid">
         <mat-card *ngFor="let transcription of failedTranscriptions" class="transcription-card failed">
           <mat-card-header>

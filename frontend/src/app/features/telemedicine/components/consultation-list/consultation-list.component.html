@@ -33,20 +33,15 @@
     </button>
     
     <button mat-raised-button color="accent" routerLink="/telemedicine/messages">
-      <mat-icon>chat</mat-icon>
+      <mat-icon matBadge="3" matBadgeColor="warn">chat</mat-icon>
       Messages
-      <span class="message-badge">3</span>
     </button>
   </div>
 
   <!-- Consultation Tabs -->
   <mat-tab-group>
     <!-- Active Consultations -->
-    <mat-tab label="En cours" *ngIf="activeConsultations.length > 0">
-      <ng-template mat-tab-label>
-        En cours
-        <span class="badge">({{ activeConsultations.length }})</span>
-      </ng-template>
+    <mat-tab label="En cours" [badgeContent]="activeConsultations.length" *ngIf="activeConsultations.length > 0">
       <div class="consultations-grid">
         <mat-card *ngFor="let consultation of activeConsultations" class="consultation-card active">
           <mat-card-header>
@@ -88,11 +83,7 @@
     </mat-tab>
 
     <!-- Upcoming Consultations -->
-    <mat-tab label="À venir">
-      <ng-template mat-tab-label>
-        À venir
-        <span class="badge" *ngIf="upcomingConsultations.length > 0">({{ upcomingConsultations.length }})</span>
-      </ng-template>
+    <mat-tab label="À venir" [badgeContent]="upcomingConsultations.length">
       <div class="consultations-grid">
         <mat-card *ngFor="let consultation of upcomingConsultations" class="consultation-card">
           <mat-card-header>
@@ -141,11 +132,7 @@
     </mat-tab>
 
     <!-- Past Consultations -->
-    <mat-tab label="Historique">
-      <ng-template mat-tab-label>
-        Historique
-        <span class="badge" *ngIf="pastConsultations.length > 0">({{ pastConsultations.length }})</span>
-      </ng-template>
+    <mat-tab label="Historique" [badgeContent]="pastConsultations.length">
       <div class="consultations-grid">
         <mat-card *ngFor="let consultation of pastConsultations" class="consultation-card">
           <mat-card-header>

@@ -35,11 +35,7 @@
   <!-- RCP Tabs -->
   <mat-tab-group>
     <!-- Active Meetings -->
-    <mat-tab label="En cours" *ngIf="activeMeetings.length > 0">
-      <ng-template mat-tab-label>
-        En cours
-        <span class="badge">({{ activeMeetings.length }})</span>
-      </ng-template>
+    <mat-tab label="En cours" [badgeContent]="activeMeetings.length" *ngIf="activeMeetings.length > 0">
       <div class="rcp-grid">
         <mat-card *ngFor="let meeting of activeMeetings" class="rcp-card active">
           <mat-card-header>
@@ -95,11 +91,7 @@
     </mat-tab>
 
     <!-- Upcoming Meetings -->
-    <mat-tab label="À venir">
-      <ng-template mat-tab-label>
-        À venir
-        <span class="badge" *ngIf="upcomingMeetings.length > 0">({{ upcomingMeetings.length }})</span>
-      </ng-template>
+    <mat-tab label="À venir" [badgeContent]="upcomingMeetings.length">
       <div class="rcp-grid">
         <mat-card *ngFor="let meeting of upcomingMeetings" class="rcp-card">
           <mat-card-header>
@@ -172,11 +164,7 @@
     </mat-tab>
 
     <!-- Completed Meetings -->
-    <mat-tab label="Historique">
-      <ng-template mat-tab-label>
-        Historique
-        <span class="badge" *ngIf="completedMeetings.length > 0">({{ completedMeetings.length }})</span>
-      </ng-template>
+    <mat-tab label="Historique" [badgeContent]="completedMeetings.length">
       <div class="rcp-grid">
         <mat-card *ngFor="let meeting of completedMeetings" class="rcp-card">
           <mat-card-header>

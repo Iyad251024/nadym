@@ -36,11 +36,7 @@
   <!-- DCC Tabs -->
   <mat-tab-group>
     <!-- Active Patients -->
-    <mat-tab label="Patients actifs">
-      <ng-template mat-tab-label>
-        Patients actifs
-        <span class="badge" *ngIf="activePatients.length > 0">({{ activePatients.length }})</span>
-      </ng-template>
+    <mat-tab label="Patients actifs" [badgeContent]="activePatients.length">
       <div class="dcc-grid">
         <mat-card *ngFor="let patient of activePatients" class="dcc-card" 
                   [class.high-risk]="patient.riskLevel === 'high'"
@@ -123,11 +119,7 @@
     </mat-tab>
 
     <!-- Completed Patients -->
-    <mat-tab label="Terminés" *ngIf="completedPatients.length > 0">
-      <ng-template mat-tab-label>
-        Terminés
-        <span class="badge">({{ completedPatients.length }})</span>
-      </ng-template>
+    <mat-tab label="Terminés" [badgeContent]="completedPatients.length" *ngIf="completedPatients.length > 0">
       <div class="dcc-grid">
         <mat-card *ngFor="let patient of completedPatients" class="dcc-card">
           <mat-card-header>
@@ -166,11 +158,7 @@
     </mat-tab>
 
     <!-- Suspended Patients -->
-    <mat-tab label="Suspendus" *ngIf="suspendedPatients.length > 0">
-      <ng-template mat-tab-label>
-        Suspendus
-        <span class="badge">({{ suspendedPatients.length }})</span>
-      </ng-template>
+    <mat-tab label="Suspendus" [badgeContent]="suspendedPatients.length" *ngIf="suspendedPatients.length > 0">
       <div class="dcc-grid">
         <mat-card *ngFor="let patient of suspendedPatients" class="dcc-card suspended">
           <mat-card-header>
