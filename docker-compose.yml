@@ -41,8 +41,8 @@ services:
   # API Gateway
   api-gateway:
     build:
-      context: .
-      dockerfile: backend/api-gateway/Dockerfile
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: nadym-api-gateway
     ports:
       - "8081:8081"
@@ -57,8 +57,8 @@ services:
   # Patient Service
   patient-service:
     build:
-      context: .
-      dockerfile: backend/patient-service/Dockerfile
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: nadym-patient-service
     ports:
       - "8082:8082"
@@ -77,8 +77,8 @@ services:
   # Observance Service
   observance-service:
     build:
-      context: .
-      dockerfile: backend/observance-service/Dockerfile
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: nadym-observance-service
     ports:
       - "8083:8083"
@@ -97,8 +97,8 @@ services:
   # Telemedicine Service
   telemedicine-service:
     build:
-      context: .
-      dockerfile: backend/telemedicine-service/Dockerfile
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: nadym-telemedicine-service
     ports:
       - "8084:8084"
@@ -117,8 +117,8 @@ services:
   # Teleexpertise Service
   teleexpertise-service:
     build:
-      context: .
-      dockerfile: backend/teleexpertise-service/Dockerfile
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: nadym-teleexpertise-service
     ports:
       - "8085:8085"
@@ -137,8 +137,8 @@ services:
   # RCP Service
   rcp-service:
     build:
-      context: .
-      dockerfile: backend/rcp-service/Dockerfile
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: nadym-rcp-service
     ports:
       - "8086:8086"
@@ -157,8 +157,8 @@ services:
   # DCC Service
   dcc-service:
     build:
-      context: .
-      dockerfile: backend/dcc-service/Dockerfile
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: nadym-dcc-service
     ports:
       - "8087:8087"
@@ -177,8 +177,8 @@ services:
   # Transcription Service
   transcription-service:
     build:
-      context: .
-      dockerfile: backend/transcription-service/Dockerfile
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: nadym-transcription-service
     ports:
       - "8088:8088"
@@ -198,8 +198,8 @@ services:
   # Interoperability Service
   interoperability-service:
     build:
-      context: .
-      dockerfile: backend/interoperability-service/Dockerfile
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: nadym-interoperability-service
     ports:
       - "8089:8089"
@@ -218,8 +218,8 @@ services:
   # Security Service
   security-service:
     build:
-      context: .
-      dockerfile: backend/security-service/Dockerfile
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: nadym-security-service
     ports:
       - "8090:8090"
@@ -238,8 +238,8 @@ services:
   # Frontend
   frontend:
     build:
-      context: .
-      dockerfile: frontend/Dockerfile
+      context: ./frontend
+      dockerfile: Dockerfile
     container_name: nadym-frontend
     ports:
       - "4200:80"

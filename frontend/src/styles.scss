@@ -101,6 +101,29 @@ html, body {
   border-left: 4px solid #2e7d32;
 }
 
+// Badge styles for tab labels
+.badge {
+  background: #1976d2;
+  color: white;
+  border-radius: 10px;
+  padding: 2px 6px;
+  font-size: 0.75rem;
+  margin-left: 8px;
+  min-width: 18px;
+  text-align: center;
+}
+
+.message-badge {
+  background: #f44336;
+  color: white;
+  border-radius: 10px;
+  padding: 2px 6px;
+  font-size: 0.75rem;
+  margin-left: 8px;
+  min-width: 18px;
+  text-align: center;
+}
+
 // Responsive design
 @media (max-width: 768px) {
   .page-header h1 {

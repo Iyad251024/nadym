@@ -1,18 +1,28 @@
-# backend/api-gateway/Dockerfile
-FROM nadym-base:latest
+FROM openjdk:17-jdk-slim
 
-# --- Étape 1 : copier et installer le module common ---
+WORKDIR /app
+
+# Install dependencies
+RUN apt-get update && \
+    apt-get install -y bash curl maven && \
+    rm -rf /var/lib/apt/lists/*
+
+# Copy common module first
 COPY common ./common
+
+# Build and install common module
 RUN cd common && mvn clean install -DskipTests
 
-# --- Étape 2 : préparer le service api-gateway ---
-COPY backend/api-gateway/pom.xml ./
+# Copy service files
+COPY api-gateway/pom.xml ./
 RUN mvn dependency:go-offline -B
 
-COPY backend/api-gateway/src ./src
+# Copy source code
+COPY api-gateway/src ./src
 
-# --- Étape 3 : build final ---
+# Build application
 RUN mvn clean package -DskipTests
 
+# Run application
 EXPOSE 8081
 CMD ["java", "-jar", "target/api-gateway-1.0.0.jar"]

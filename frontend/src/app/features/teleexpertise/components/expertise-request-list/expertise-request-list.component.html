@@ -35,7 +35,11 @@
   <!-- Expertise Request Tabs -->
   <mat-tab-group>
     <!-- Pending Requests -->
-    <mat-tab label="En attente" [badgeContent]="pendingRequests.length">
+    <mat-tab label="En attente">
+      <ng-template mat-tab-label>
+        En attente
+        <span class="badge" *ngIf="pendingRequests.length > 0">({{ pendingRequests.length }})</span>
+      </ng-template>
       <div class="requests-grid">
         <mat-card *ngFor="let request of pendingRequests" class="request-card pending">
           <mat-card-header>
@@ -79,7 +83,11 @@
     </mat-tab>
 
     <!-- In Progress Requests -->
-    <mat-tab label="En cours" [badgeContent]="inProgressRequests.length">
+    <mat-tab label="En cours">
+      <ng-template mat-tab-label>
+        En cours
+        <span class="badge" *ngIf="inProgressRequests.length > 0">({{ inProgressRequests.length }})</span>
+      </ng-template>
       <div class="requests-grid">
         <mat-card *ngFor="let request of inProgressRequests" class="request-card in-progress">
           <mat-card-header>
@@ -128,7 +136,11 @@
     </mat-tab>
 
     <!-- Completed Requests -->
-    <mat-tab label="Terminées" [badgeContent]="completedRequests.length">
+    <mat-tab label="Terminées">
+      <ng-template mat-tab-label>
+        Terminées
+        <span class="badge" *ngIf="completedRequests.length > 0">({{ completedRequests.length }})</span>
+      </ng-template>
       <div class="requests-grid">
         <mat-card *ngFor="let request of completedRequests" class="request-card">
           <mat-card-header>

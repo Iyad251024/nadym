@@ -1,9 +1,0 @@
-# Dockerfile.base
-FROM openjdk:17-jdk-slim
-
-# Installer les dépendances communes une seule fois
-RUN apt-get update && \
-    apt-get install -y bash curl maven && \
-    rm -rf /var/lib/apt/lists/*
-
-WORKDIR /app
