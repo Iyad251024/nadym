@@ -1,11 +1,5 @@
-FROM openjdk:17-jdk-slim
-
-WORKDIR /app
-
-# Install dependencies
-RUN apt-get update && \
-    apt-get install -y bash curl maven && \
-    rm -rf /var/lib/apt/lists/*
+# backend/api-gateway/Dockerfile
+FROM nadym-base:latest
 
 # Copy common module first
 COPY common ./common
@@ -14,11 +8,11 @@ COPY common ./common
 RUN cd common && mvn clean install -DskipTests
 
 # Copy service files
-COPY transcription-service/pom.xml ./
+COPY backend/transcription-service/pom.xml ./
 RUN mvn dependency:go-offline -B
 
 # Copy source code
-COPY transcription-service/src ./src
+COPY backend/transcription-service/src ./src
 
 # Build application
 RUN mvn clean package -DskipTests
