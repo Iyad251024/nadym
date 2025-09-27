@@ -41,7 +41,7 @@ services:
   # API Gateway
   api-gateway:
     build:
-      context: ./backend/api-gateway
+      context: ./backend
       dockerfile: Dockerfile
     container_name: nadym-api-gateway
     ports:
@@ -57,7 +57,7 @@ services:
   # Patient Service
   patient-service:
     build:
-      context: ./backend/patient-service
+      context: ./backend
       dockerfile: Dockerfile
     container_name: nadym-patient-service
     ports:
@@ -77,7 +77,7 @@ services:
   # Observance Service
   observance-service:
     build:
-      context: ./backend/observance-service
+      context: ./backend
       dockerfile: Dockerfile
     container_name: nadym-observance-service
     ports:
@@ -97,7 +97,7 @@ services:
   # Telemedicine Service
   telemedicine-service:
     build:
-      context: ./backend/telemedicine-service
+      context: ./backend
       dockerfile: Dockerfile
     container_name: nadym-telemedicine-service
     ports:
@@ -117,7 +117,7 @@ services:
   # Teleexpertise Service
   teleexpertise-service:
     build:
-      context: ./backend/teleexpertise-service
+      context: ./backend
       dockerfile: Dockerfile
     container_name: nadym-teleexpertise-service
     ports:
@@ -137,7 +137,7 @@ services:
   # RCP Service
   rcp-service:
     build:
-      context: ./backend/rcp-service
+      context: ./backend
       dockerfile: Dockerfile
     container_name: nadym-rcp-service
     ports:
@@ -157,7 +157,7 @@ services:
   # DCC Service
   dcc-service:
     build:
-      context: ./backend/dcc-service
+      context: ./backend
       dockerfile: Dockerfile
     container_name: nadym-dcc-service
     ports:
@@ -177,7 +177,7 @@ services:
   # Transcription Service
   transcription-service:
     build:
-      context: ./backend/transcription-service
+      context: ./backend
       dockerfile: Dockerfile
     container_name: nadym-transcription-service
     ports:
@@ -198,7 +198,7 @@ services:
   # Interoperability Service
   interoperability-service:
     build:
-      context: ./backend/interoperability-service
+      context: ./backend
       dockerfile: Dockerfile
     container_name: nadym-interoperability-service
     ports:
@@ -218,7 +218,7 @@ services:
   # Security Service
   security-service:
     build:
-      context: ./backend/security-service
+      context: ./backend
       dockerfile: Dockerfile
     container_name: nadym-security-service
     ports:
