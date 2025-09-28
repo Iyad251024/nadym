@@ -2,6 +2,10 @@ server:
   port: 8081
 
 spring:
+  main:
+    web-application-type: reactive
+    allow-bean-definition-overriding: true
+
   application:
     name: api-gateway
   
@@ -111,7 +115,7 @@ spring:
   config:
     activate:
       on-profile: docker
-  
+
   cloud:
     gateway:
       routes:

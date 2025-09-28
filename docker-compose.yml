@@ -238,8 +238,8 @@ services:
   # Frontend
   frontend:
     build:
-      context: .
-      dockerfile: frontend/Dockerfile
+      context: ./frontend
+      dockerfile: Dockerfile
     container_name: nadym-frontend
     ports:
       - "4200:80"
