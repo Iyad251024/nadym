@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -21,7 +22,7 @@ interface Patient {
   templateUrl: './patient-list.component.html',
   styleUrls: ['./patient-list.component.scss']
 })
-export class PatientListComponent implements OnInit {
+export class PatientListComponent implements OnInit, AfterViewInit {
   
   displayedColumns: string[] = ['id', 'name', 'email', 'phone', 'age', 'city', 'actions'];
   dataSource = new MatTableDataSource<Patient>();

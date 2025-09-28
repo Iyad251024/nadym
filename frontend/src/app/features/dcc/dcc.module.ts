@@ -20,6 +20,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { DccRoutingModule } from './dcc-routing.module';
 import { DccListComponent } from './components/dcc-list/dcc-list.component';
@@ -55,7 +56,8 @@ import { DccFormComponent } from './components/dcc-form/dcc-form.component';
     MatTabsModule,
     MatChipsModule,
     MatStepperModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatTooltipModule
   ]
 })
 export class DccModule { }

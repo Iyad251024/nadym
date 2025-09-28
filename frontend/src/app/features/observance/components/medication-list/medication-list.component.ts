@@ -106,4 +106,10 @@ export class MedicationListComponent implements OnInit {
   resumeMedication(medication: Medication) {
     medication.status = 'active';
   }
+
+  getAverageAdherence(): number {
+    if (this.medications.length === 0) return 0;
+    const sum = this.medications.reduce((sum, med) => sum + med.adherenceRate, 0);
+    return Math.round(sum / this.medications.length);
+  }
 }

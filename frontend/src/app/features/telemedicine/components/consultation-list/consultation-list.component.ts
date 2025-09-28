@@ -53,9 +53,6 @@ export class ConsultationListComponent implements OnInit {
 
   userRoles: string[] = [];
   loading = false;
-  upcomingConsultations: Consultation[] = [];
-  activeConsultations: Consultation[] = [];
-  pastConsultations: Consultation[] = [];
 
   constructor(
     private router: Router,
@@ -65,7 +62,6 @@ export class ConsultationListComponent implements OnInit {
   ngOnInit() {
     this.userRoles = this.keycloakService.getUserRoles();
     this.loadConsultations();
-    this.categorizeConsultations();
   }
 
   loadConsultations() {
@@ -76,18 +72,21 @@ export class ConsultationListComponent implements OnInit {
     }, 1000);
   }
 
-  categorizeConsultations() {
+  getUpcomingConsultations(): Consultation[] {
     const now = new Date();
-    
-    this.upcomingConsultations = this.consultations.filter(c => 
+    return this.consultations.filter(c => 
       c.status === 'scheduled' && new Date(c.scheduledTime) > now
     );
-    
-    this.activeConsultations = this.consultations.filter(c => 
+  }
+
+  getActiveConsultations(): Consultation[] {
+    return this.consultations.filter(c => 
       c.status === 'in_progress'
     );
-    
-    this.pastConsultations = this.consultations.filter(c => 
+  }
+
+  getPastConsultations(): Consultation[] {
+    return this.consultations.filter(c => 
       c.status === 'completed' || c.status === 'cancelled'
     );
   }
@@ -134,7 +133,6 @@ export class ConsultationListComponent implements OnInit {
   cancelConsultation(consultation: Consultation) {
     if (confirm('Êtes-vous sûr de vouloir annuler cette consultation ?')) {
       consultation.status = 'cancelled';
-      this.categorizeConsultations();
     }
   }
 

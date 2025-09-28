@@ -19,6 +19,8 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { TranscriptionRoutingModule } from './transcription-routing.module';
 import { TranscriptionListComponent } from './components/transcription-list/transcription-list.component';
@@ -53,7 +55,9 @@ import { AudioUploadComponent } from './components/audio-upload/audio-upload.com
     MatTabsModule,
     MatChipsModule,
     MatExpansionModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatTooltipModule,
+    MatSlideToggleModule
   ]
 })
 export class TranscriptionModule { }

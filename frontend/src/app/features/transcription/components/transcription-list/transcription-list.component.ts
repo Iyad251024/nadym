@@ -66,15 +66,11 @@ export class TranscriptionListComponent implements OnInit {
   ];
 
   loading = false;
-  completedTranscriptions: Transcription[] = [];
-  processingTranscriptions: Transcription[] = [];
-  failedTranscriptions: Transcription[] = [];
 
   constructor(private router: Router) {}
 
   ngOnInit() {
     this.loadTranscriptions();
-    this.categorizeTranscriptions();
   }
 
   loadTranscriptions() {
@@ -85,10 +81,23 @@ export class TranscriptionListComponent implements OnInit {
     }, 1000);
   }
 
-  categorizeTranscriptions() {
-    this.completedTranscriptions = this.transcriptions.filter(t => t.status === 'completed');
-    this.processingTranscriptions = this.transcriptions.filter(t => t.status === 'processing' || t.status === 'pending');
-    this.failedTranscriptions = this.transcriptions.filter(t => t.status === 'failed');
+  getCompletedTranscriptions(): Transcription[] {
+    return this.transcriptions.filter(t => t.status === 'completed');
+  }
+
+  getProcessingTranscriptions(): Transcription[] {
+    return this.transcriptions.filter(t => t.status === 'processing' || t.status === 'pending');
+  }
+
+  getFailedTranscriptions(): Transcription[] {
+    return this.transcriptions.filter(t => t.status === 'failed');
+  }
+
+  getAverageConfidence(): number {
+    const completed = this.getCompletedTranscriptions();
+    if (completed.length === 0) return 0;
+    const sum = completed.reduce((sum, t) => sum + (t.confidenceScore || 0), 0);
+    return Math.round(sum / completed.length);
   }
 
   getStatusColor(status: string): string {
@@ -127,11 +136,9 @@ export class TranscriptionListComponent implements OnInit {
 
   retryTranscription(transcription: Transcription) {
     transcription.status = 'pending';
-    this.categorizeTranscriptions();
     // Simulate retry
     setTimeout(() => {
       transcription.status = 'processing';
-      this.categorizeTranscriptions();
     }, 1000);
   }
 

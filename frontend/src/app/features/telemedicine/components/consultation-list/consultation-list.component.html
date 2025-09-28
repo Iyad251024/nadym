@@ -9,17 +9,17 @@
   <!-- Quick Stats -->
   <div class="card-grid">
     <div class="stat-card">
-      <h2 class="stat-number">{{ upcomingConsultations.length }}</h2>
+      <h2 class="stat-number">{{ getUpcomingConsultations().length }}</h2>
       <p class="stat-label">Consultations à venir</p>
     </div>
     
     <div class="stat-card">
-      <h2 class="stat-number">{{ activeConsultations.length }}</h2>
+      <h2 class="stat-number">{{ getActiveConsultations().length }}</h2>
       <p class="stat-label">En cours</p>
     </div>
     
     <div class="stat-card">
-      <h2 class="stat-number">{{ pastConsultations.length }}</h2>
+      <h2 class="stat-number">{{ getPastConsultations().length }}</h2>
       <p class="stat-label">Terminées</p>
     </div>
   </div>
@@ -33,7 +33,7 @@
     </button>
     
     <button mat-raised-button color="accent" routerLink="/telemedicine/messages">
-      <mat-icon matBadge="3" matBadgeColor="warn">chat</mat-icon>
+      <mat-icon>chat</mat-icon>
       Messages
     </button>
   </div>
@@ -41,9 +41,9 @@
   <!-- Consultation Tabs -->
   <mat-tab-group>
     <!-- Active Consultations -->
-    <mat-tab label="En cours" [badgeContent]="activeConsultations.length" *ngIf="activeConsultations.length > 0">
+    <mat-tab label="En cours" *ngIf="getActiveConsultations().length > 0">
       <div class="consultations-grid">
-        <mat-card *ngFor="let consultation of activeConsultations" class="consultation-card active">
+        <mat-card *ngFor="let consultation of getActiveConsultations()" class="consultation-card active">
           <mat-card-header>
             <mat-icon mat-card-avatar [color]="getStatusColor(consultation.status)">
               {{ getTypeIcon(consultation.type) }}
@@ -83,9 +83,9 @@
     </mat-tab>
 
     <!-- Upcoming Consultations -->
-    <mat-tab label="À venir" [badgeContent]="upcomingConsultations.length">
+    <mat-tab label="À venir">
       <div class="consultations-grid">
-        <mat-card *ngFor="let consultation of upcomingConsultations" class="consultation-card">
+        <mat-card *ngFor="let consultation of getUpcomingConsultations()" class="consultation-card">
           <mat-card-header>
             <mat-icon mat-card-avatar [color]="getStatusColor(consultation.status)">
               {{ getTypeIcon(consultation.type) }}
@@ -132,9 +132,9 @@
     </mat-tab>
 
     <!-- Past Consultations -->
-    <mat-tab label="Historique" [badgeContent]="pastConsultations.length">
+    <mat-tab label="Historique">
       <div class="consultations-grid">
-        <mat-card *ngFor="let consultation of pastConsultations" class="consultation-card">
+        <mat-card *ngFor="let consultation of getPastConsultations()" class="consultation-card">
           <mat-card-header>
             <mat-icon mat-card-avatar [color]="getStatusColor(consultation.status)">
               {{ getTypeIcon(consultation.type) }}

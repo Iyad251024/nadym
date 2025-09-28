@@ -20,6 +20,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { ObservanceRoutingModule } from './observance-routing.module';
 import { MedicationListComponent } from './components/medication-list/medication-list.component';
@@ -57,7 +58,8 @@ import { AdherenceReportComponent } from './components/adherence-report/adherenc
     MatTabsModule,
     MatChipsModule,
     MatSlideToggleModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatTooltipModule
   ]
 })
 export class ObservanceModule { }

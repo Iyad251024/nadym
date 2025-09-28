@@ -14,7 +14,7 @@
     </div>
     
     <div class="stat-card">
-      <h2 class="stat-number">{{ (medications.reduce((sum, med) => sum + med.adherenceRate, 0) / medications.length).toFixed(0) }}%</h2>
+      <h2 class="stat-number">{{ getAverageAdherence() }}%</h2>
       <p class="stat-label">Observance moyenne</p>
     </div>
     

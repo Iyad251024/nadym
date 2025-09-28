@@ -67,15 +67,11 @@ export class RcpListComponent implements OnInit {
   ];
 
   loading = false;
-  upcomingMeetings: RcpMeeting[] = [];
-  activeMeetings: RcpMeeting[] = [];
-  completedMeetings: RcpMeeting[] = [];
 
   constructor(private router: Router) {}
 
   ngOnInit() {
     this.loadRcpMeetings();
-    this.categorizeMeetings();
   }
 
   loadRcpMeetings() {
@@ -86,18 +82,21 @@ export class RcpListComponent implements OnInit {
     }, 1000);
   }
 
-  categorizeMeetings() {
+  getUpcomingMeetings(): RcpMeeting[] {
     const now = new Date();
-    
-    this.upcomingMeetings = this.rcpMeetings.filter(m => 
+    return this.rcpMeetings.filter(m => 
       m.status === 'scheduled' && new Date(m.scheduledDate) > now
     );
-    
-    this.activeMeetings = this.rcpMeetings.filter(m => 
+  }
+
+  getActiveMeetings(): RcpMeeting[] {
+    return this.rcpMeetings.filter(m => 
       m.status === 'in_progress'
     );
-    
-    this.completedMeetings = this.rcpMeetings.filter(m => 
+  }
+
+  getCompletedMeetings(): RcpMeeting[] {
+    return this.rcpMeetings.filter(m => 
       m.status === 'completed' || m.status === 'cancelled'
     );
   }
@@ -156,7 +155,6 @@ export class RcpListComponent implements OnInit {
   cancelRcp(meeting: RcpMeeting) {
     if (confirm('Êtes-vous sûr de vouloir annuler cette RCP ?')) {
       meeting.status = 'cancelled';
-      this.categorizeMeetings();
     }
   }
 

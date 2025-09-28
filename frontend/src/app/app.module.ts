@@ -25,6 +25,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 // Keycloak
 import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
@@ -97,6 +100,9 @@ function initializeKeycloak(keycloak: KeycloakService) {
     MatMenuModule,
     MatChipsModule,
     MatTabsModule,
+    MatDividerModule,
+    MatTooltipModule,
+    MatSlideToggleModule,
     
     // Keycloak
     KeycloakAngularModule,
@@ -112,7 +118,7 @@ function initializeKeycloak(keycloak: KeycloakService) {
   ],
   providers: [
     {
-      provide: 'APP_INIT',
+      provide: APP_INITIALIZER,
       useFactory: initializeKeycloak,
       multi: true,
       deps: [KeycloakService],

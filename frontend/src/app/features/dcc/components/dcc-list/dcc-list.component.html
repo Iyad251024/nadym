@@ -9,17 +9,17 @@
   <!-- Quick Stats -->
   <div class="card-grid">
     <div class="stat-card">
-      <h2 class="stat-number">{{ activePatients.length }}</h2>
+      <h2 class="stat-number">{{ getActivePatients().length }}</h2>
       <p class="stat-label">Patients actifs</p>
     </div>
     
     <div class="stat-card">
-      <h2 class="stat-number">{{ activePatients.filter(p => p.riskLevel === 'high').length }}</h2>
+      <h2 class="stat-number">{{ getHighRiskPatients().length }}</h2>
       <p class="stat-label">Risque élevé</p>
     </div>
     
     <div class="stat-card">
-      <h2 class="stat-number">{{ activePatients.filter(p => p.nextAppointment && isUpcoming(p.nextAppointment)).length }}</h2>
+      <h2 class="stat-number">{{ getUpcomingAppointments().length }}</h2>
       <p class="stat-label">RDV cette semaine</p>
     </div>
   </div>
@@ -36,11 +36,11 @@
   <!-- DCC Tabs -->
   <mat-tab-group>
     <!-- Active Patients -->
-    <mat-tab label="Patients actifs" [badgeContent]="activePatients.length">
+    <mat-tab label="Patients actifs">
       <div class="dcc-grid">
-        <mat-card *ngFor="let patient of activePatients" class="dcc-card" 
-                  [class.high-risk]="patient.riskLevel === 'high'"
-                  [class.upcoming-appointment]="patient.nextAppointment && isUpcoming(patient.nextAppointment)">
+        <mat-card *ngFor="let patient of getActivePatients()" class="dcc-card" 
+                  [class.high-risk]="isHighRisk(patient)"
+                  [class.upcoming-appointment]="hasUpcomingAppointment(patient)">
           <mat-card-header>
             <mat-icon mat-card-avatar [color]="getTreatmentPhaseColor(patient.treatmentPhase)">
               folder_shared
@@ -119,9 +119,9 @@
     </mat-tab>
 
     <!-- Completed Patients -->
-    <mat-tab label="Terminés" [badgeContent]="completedPatients.length" *ngIf="completedPatients.length > 0">
+    <mat-tab label="Terminés" *ngIf="getCompletedPatients().length > 0">
       <div class="dcc-grid">
-        <mat-card *ngFor="let patient of completedPatients" class="dcc-card">
+        <mat-card *ngFor="let patient of getCompletedPatients()" class="dcc-card">
           <mat-card-header>
             <mat-icon mat-card-avatar color="primary">check_circle</mat-icon>
             <mat-card-title>{{ patient.patientName }}, {{ patient.patientAge }} ans</mat-card-title>
@@ -158,9 +158,9 @@
     </mat-tab>
 
     <!-- Suspended Patients -->
-    <mat-tab label="Suspendus" [badgeContent]="suspendedPatients.length" *ngIf="suspendedPatients.length > 0">
+    <mat-tab label="Suspendus" *ngIf="getSuspendedPatients().length > 0">
       <div class="dcc-grid">
-        <mat-card *ngFor="let patient of suspendedPatients" class="dcc-card suspended">
+        <mat-card *ngFor="let patient of getSuspendedPatients()" class="dcc-card suspended">
           <mat-card-header>
             <mat-icon mat-card-avatar color="warn">pause_circle</mat-icon>
             <mat-card-title>{{ patient.patientName }}, {{ patient.patientAge }} ans</mat-card-title>

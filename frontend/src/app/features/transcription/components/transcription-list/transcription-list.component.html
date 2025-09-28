@@ -9,17 +9,17 @@
   <!-- Quick Stats -->
   <div class="card-grid">
     <div class="stat-card">
-      <h2 class="stat-number">{{ completedTranscriptions.length }}</h2>
+      <h2 class="stat-number">{{ getCompletedTranscriptions().length }}</h2>
       <p class="stat-label">Transcriptions terminées</p>
     </div>
     
     <div class="stat-card">
-      <h2 class="stat-number">{{ processingTranscriptions.length }}</h2>
+      <h2 class="stat-number">{{ getProcessingTranscriptions().length }}</h2>
       <p class="stat-label">En cours de traitement</p>
     </div>
     
     <div class="stat-card">
-      <h2 class="stat-number">{{ (completedTranscriptions.reduce((sum, t) => sum + (t.confidenceScore || 0), 0) / completedTranscriptions.length).toFixed(0) }}%</h2>
+      <h2 class="stat-number">{{ getAverageConfidence() }}%</h2>
       <p class="stat-label">Précision moyenne</p>
     </div>
   </div>
@@ -35,9 +35,9 @@
   <!-- Transcription Tabs -->
   <mat-tab-group>
     <!-- Processing Transcriptions -->
-    <mat-tab label="En cours" [badgeContent]="processingTranscriptions.length" *ngIf="processingTranscriptions.length > 0">
+    <mat-tab label="En cours" *ngIf="getProcessingTranscriptions().length > 0">
       <div class="transcriptions-grid">
-        <mat-card *ngFor="let transcription of processingTranscriptions" class="transcription-card processing">
+        <mat-card *ngFor="let transcription of getProcessingTranscriptions()" class="transcription-card processing">
           <mat-card-header>
             <mat-icon mat-card-avatar color="accent">transcribe</mat-icon>
             <mat-card-title>{{ transcription.patientName }}</mat-card-title>
@@ -68,9 +68,9 @@
     </mat-tab>
 
     <!-- Completed Transcriptions -->
-    <mat-tab label="Terminées" [badgeContent]="completedTranscriptions.length">
+    <mat-tab label="Terminées">
       <div class="transcriptions-grid">
-        <mat-card *ngFor="let transcription of completedTranscriptions" class="transcription-card">
+        <mat-card *ngFor="let transcription of getCompletedTranscriptions()" class="transcription-card">
           <mat-card-header>
             <mat-icon mat-card-avatar color="primary">description</mat-icon>
             <mat-card-title>{{ transcription.patientName }}</mat-card-title>
@@ -128,9 +128,9 @@
     </mat-tab>
 
     <!-- Failed Transcriptions -->
-    <mat-tab label="Échecs" [badgeContent]="failedTranscriptions.length" *ngIf="failedTranscriptions.length > 0">
+    <mat-tab label="Échecs" *ngIf="getFailedTranscriptions().length > 0">
       <div class="transcriptions-grid">
-        <mat-card *ngFor="let transcription of failedTranscriptions" class="transcription-card failed">
+        <mat-card *ngFor="let transcription of getFailedTranscriptions()" class="transcription-card failed">
           <mat-card-header>
             <mat-icon mat-card-avatar color="warn">error</mat-icon>
             <mat-card-title>{{ transcription.patientName }}</mat-card-title>

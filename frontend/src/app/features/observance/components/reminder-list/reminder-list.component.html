@@ -10,7 +10,7 @@
   <mat-card class="reminders-card">
     <mat-card-header>
       <mat-card-title>Rappels configurés</mat-card-title>
-      <mat-card-subtitle>{{ reminders.filter(r => r.isActive).length }} rappels actifs</mat-card-subtitle>
+      <mat-card-subtitle>{{ getActiveRemindersCount() }} rappels actifs</mat-card-subtitle>
     </mat-card-header>
     
     <mat-card-content>

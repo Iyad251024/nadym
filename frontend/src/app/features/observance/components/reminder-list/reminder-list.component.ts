@@ -108,4 +108,8 @@ export class ReminderListComponent implements OnInit {
     const diffHours = (reminderDate.getTime() - now.getTime()) / (1000 * 3600);
     return diffHours <= 2 && diffHours >= 0;
   }
+
+  getActiveRemindersCount(): number {
+    return this.reminders.filter(r => r.isActive).length;
+  }
 }

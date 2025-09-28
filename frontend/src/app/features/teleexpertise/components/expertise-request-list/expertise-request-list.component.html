@@ -9,17 +9,17 @@
   <!-- Quick Stats -->
   <div class="card-grid">
     <div class="stat-card">
-      <h2 class="stat-number">{{ pendingRequests.length }}</h2>
+      <h2 class="stat-number">{{ getPendingRequests().length }}</h2>
       <p class="stat-label">En attente</p>
     </div>
     
     <div class="stat-card">
-      <h2 class="stat-number">{{ inProgressRequests.length }}</h2>
+      <h2 class="stat-number">{{ getInProgressRequests().length }}</h2>
       <p class="stat-label">En cours</p>
     </div>
     
     <div class="stat-card">
-      <h2 class="stat-number">{{ completedRequests.length }}</h2>
+      <h2 class="stat-number">{{ getCompletedRequests().length }}</h2>
       <p class="stat-label">Terminées</p>
     </div>
   </div>
@@ -35,9 +35,9 @@
   <!-- Expertise Request Tabs -->
   <mat-tab-group>
     <!-- Pending Requests -->
-    <mat-tab label="En attente" [badgeContent]="pendingRequests.length">
+    <mat-tab label="En attente">
       <div class="requests-grid">
-        <mat-card *ngFor="let request of pendingRequests" class="request-card pending">
+        <mat-card *ngFor="let request of getPendingRequests()" class="request-card pending">
           <mat-card-header>
             <mat-icon mat-card-avatar color="accent">psychology</mat-icon>
             <mat-card-title>{{ request.patientName }}</mat-card-title>
@@ -79,9 +79,9 @@
     </mat-tab>
 
     <!-- In Progress Requests -->
-    <mat-tab label="En cours" [badgeContent]="inProgressRequests.length">
+    <mat-tab label="En cours">
       <div class="requests-grid">
-        <mat-card *ngFor="let request of inProgressRequests" class="request-card in-progress">
+        <mat-card *ngFor="let request of getInProgressRequests()" class="request-card in-progress">
           <mat-card-header>
             <mat-icon mat-card-avatar color="primary">psychology</mat-icon>
             <mat-card-title>{{ request.patientName }}</mat-card-title>
@@ -128,9 +128,9 @@
     </mat-tab>
 
     <!-- Completed Requests -->
-    <mat-tab label="Terminées" [badgeContent]="completedRequests.length">
+    <mat-tab label="Terminées">
       <div class="requests-grid">
-        <mat-card *ngFor="let request of completedRequests" class="request-card">
+        <mat-card *ngFor="let request of getCompletedRequests()" class="request-card">
           <mat-card-header>
             <mat-icon mat-card-avatar [color]="request.status === 'completed' ? 'primary' : 'warn'">
               {{ request.status === 'completed' ? 'check_circle' : 'cancel' }}

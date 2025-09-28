@@ -171,4 +171,22 @@ export class AdherenceReportComponent implements OnInit {
     // Simulate export functionality
     console.log('Exporting adherence report...');
   }
+
+  getPatientSummariesCount(): number {
+    return this.patientSummaries.length;
+  }
+
+  getAverageAdherence(): number {
+    if (this.patientSummaries.length === 0) return 0;
+    const sum = this.patientSummaries.reduce((sum, p) => sum + p.overallAdherence, 0);
+    return Math.round(sum / this.patientSummaries.length);
+  }
+
+  getHighRiskPatientsCount(): number {
+    return this.patientSummaries.filter(p => p.riskLevel === 'high').length;
+  }
+
+  getExcellentAdherenceCount(): number {
+    return this.patientSummaries.filter(p => p.overallAdherence >= 90).length;
+  }
 }

@@ -64,15 +64,11 @@ export class ExpertiseRequestListComponent implements OnInit {
   ];
 
   loading = false;
-  pendingRequests: ExpertiseRequest[] = [];
-  inProgressRequests: ExpertiseRequest[] = [];
-  completedRequests: ExpertiseRequest[] = [];
 
   constructor(private router: Router) {}
 
   ngOnInit() {
     this.loadExpertiseRequests();
-    this.categorizeRequests();
   }
 
   loadExpertiseRequests() {
@@ -83,12 +79,18 @@ export class ExpertiseRequestListComponent implements OnInit {
     }, 1000);
   }
 
-  categorizeRequests() {
-    this.pendingRequests = this.expertiseRequests.filter(r => r.status === 'pending');
-    this.inProgressRequests = this.expertiseRequests.filter(r => 
+  getPendingRequests(): ExpertiseRequest[] {
+    return this.expertiseRequests.filter(r => r.status === 'pending');
+  }
+
+  getInProgressRequests(): ExpertiseRequest[] {
+    return this.expertiseRequests.filter(r => 
       r.status === 'assigned' || r.status === 'in_review'
     );
-    this.completedRequests = this.expertiseRequests.filter(r => 
+  }
+
+  getCompletedRequests(): ExpertiseRequest[] {
+    return this.expertiseRequests.filter(r => 
       r.status === 'completed' || r.status === 'cancelled'
     );
   }
@@ -146,7 +148,6 @@ export class ExpertiseRequestListComponent implements OnInit {
   cancelRequest(request: ExpertiseRequest) {
     if (confirm('Êtes-vous sûr de vouloir annuler cette demande d\'expertise ?')) {
       request.status = 'cancelled';
-      this.categorizeRequests();
     }
   }
 

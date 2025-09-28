@@ -19,6 +19,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { TeleexpertiseRoutingModule } from './teleexpertise-routing.module';
 import { ExpertiseRequestListComponent } from './components/expertise-request-list/expertise-request-list.component';
@@ -53,7 +54,8 @@ import { ExpertiseResponseComponent } from './components/expertise-response/expe
     MatProgressSpinnerModule,
     MatTabsModule,
     MatChipsModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatTooltipModule
   ]
 })
 export class TeleexpertiseModule { }

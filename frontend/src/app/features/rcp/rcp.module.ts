@@ -19,6 +19,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatListModule } from '@angular/material/list';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { RcpRoutingModule } from './rcp-routing.module';
 import { RcpListComponent } from './components/rcp-list/rcp-list.component';
@@ -53,7 +54,8 @@ import { RcpFormComponent } from './components/rcp-form/rcp-form.component';
     MatProgressSpinnerModule,
     MatTabsModule,
     MatChipsModule,
-    MatListModule
+    MatListModule,
+    MatTooltipModule
   ]
 })
 export class RcpModule { }

@@ -9,17 +9,17 @@
   <!-- Quick Stats -->
   <div class="card-grid">
     <div class="stat-card">
-      <h2 class="stat-number">{{ upcomingMeetings.length }}</h2>
+      <h2 class="stat-number">{{ getUpcomingMeetings().length }}</h2>
       <p class="stat-label">RCP à venir</p>
     </div>
     
     <div class="stat-card">
-      <h2 class="stat-number">{{ activeMeetings.length }}</h2>
+      <h2 class="stat-number">{{ getActiveMeetings().length }}</h2>
       <p class="stat-label">En cours</p>
     </div>
     
     <div class="stat-card">
-      <h2 class="stat-number">{{ completedMeetings.length }}</h2>
+      <h2 class="stat-number">{{ getCompletedMeetings().length }}</h2>
       <p class="stat-label">Terminées</p>
     </div>
   </div>
@@ -35,9 +35,9 @@
   <!-- RCP Tabs -->
   <mat-tab-group>
     <!-- Active Meetings -->
-    <mat-tab label="En cours" [badgeContent]="activeMeetings.length" *ngIf="activeMeetings.length > 0">
+    <mat-tab label="En cours" *ngIf="getActiveMeetings().length > 0">
       <div class="rcp-grid">
-        <mat-card *ngFor="let meeting of activeMeetings" class="rcp-card active">
+        <mat-card *ngFor="let meeting of getActiveMeetings()" class="rcp-card active">
           <mat-card-header>
             <mat-icon mat-card-avatar color="accent">groups</mat-icon>
             <mat-card-title>{{ meeting.title }}</mat-card-title>
@@ -91,9 +91,9 @@
     </mat-tab>
 
     <!-- Upcoming Meetings -->
-    <mat-tab label="À venir" [badgeContent]="upcomingMeetings.length">
+    <mat-tab label="À venir">
       <div class="rcp-grid">
-        <mat-card *ngFor="let meeting of upcomingMeetings" class="rcp-card">
+        <mat-card *ngFor="let meeting of getUpcomingMeetings()" class="rcp-card">
           <mat-card-header>
             <mat-icon mat-card-avatar color="primary">groups</mat-icon>
             <mat-card-title>{{ meeting.title }}</mat-card-title>
@@ -164,9 +164,9 @@
     </mat-tab>
 
     <!-- Completed Meetings -->
-    <mat-tab label="Historique" [badgeContent]="completedMeetings.length">
+    <mat-tab label="Historique">
       <div class="rcp-grid">
-        <mat-card *ngFor="let meeting of completedMeetings" class="rcp-card">
+        <mat-card *ngFor="let meeting of getCompletedMeetings()" class="rcp-card">
           <mat-card-header>
             <mat-icon mat-card-avatar [color]="meeting.status === 'completed' ? 'primary' : 'warn'">
               {{ meeting.status === 'completed' ? 'check_circle' : 'cancel' }}

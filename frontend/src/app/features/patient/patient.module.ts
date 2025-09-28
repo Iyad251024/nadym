@@ -18,6 +18,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { PatientRoutingModule } from './patient-routing.module';
 import { PatientListComponent } from './components/patient-list/patient-list.component';
@@ -25,6 +26,7 @@ import { PatientDetailComponent } from './components/patient-detail/patient-deta
 import { PatientFormComponent } from './components/patient-form/patient-form.component';
 import { AppointmentListComponent } from './components/appointment-list/appointment-list.component';
 import { PrescriptionListComponent } from './components/prescription-list/prescription-list.component';
+import { PatientService } from './components/patient-service';
 
 @NgModule({
   declarations: [
@@ -55,7 +57,11 @@ import { PrescriptionListComponent } from './components/prescription-list/prescr
     MatSnackBarModule,
     MatProgressSpinnerModule,
     MatTabsModule,
-    MatChipsModule
+    MatChipsModule,
+    MatTooltipModule
+  ],
+  providers: [
+    PatientService
   ]
 })
 export class PatientModule { }

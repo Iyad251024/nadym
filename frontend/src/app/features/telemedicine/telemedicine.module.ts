@@ -19,6 +19,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatBadgeModule } from '@angular/material/badge';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { TelemedicineRoutingModule } from './telemedicine-routing.module';
 import { ConsultationListComponent } from './components/consultation-list/consultation-list.component';
@@ -55,7 +57,9 @@ import { ScheduleConsultationComponent } from './components/schedule-consultatio
     MatProgressSpinnerModule,
     MatTabsModule,
     MatChipsModule,
-    MatBadgeModule
+    MatBadgeModule,
+    MatTooltipModule,
+    MatSlideToggleModule
   ]
 })
 export class TelemedicineModule { }

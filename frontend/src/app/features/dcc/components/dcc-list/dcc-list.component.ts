@@ -74,9 +74,6 @@ export class DccListComponent implements OnInit {
 
   userRoles: string[] = [];
   loading = false;
-  activePatients: DccPatient[] = [];
-  completedPatients: DccPatient[] = [];
-  suspendedPatients: DccPatient[] = [];
 
   constructor(
     private router: Router,
@@ -86,7 +83,6 @@ export class DccListComponent implements OnInit {
   ngOnInit() {
     this.userRoles = this.keycloakService.getUserRoles();
     this.loadDccPatients();
-    this.categorizePatients();
   }
 
   loadDccPatients() {
@@ -97,10 +93,32 @@ export class DccListComponent implements OnInit {
     }, 1000);
   }
 
-  categorizePatients() {
-    this.activePatients = this.dccPatients.filter(p => p.status === 'active');
-    this.completedPatients = this.dccPatients.filter(p => p.status === 'completed');
-    this.suspendedPatients = this.dccPatients.filter(p => p.status === 'suspended');
+  getActivePatients(): DccPatient[] {
+    return this.dccPatients.filter(p => p.status === 'active');
+  }
+
+  getCompletedPatients(): DccPatient[] {
+    return this.dccPatients.filter(p => p.status === 'completed');
+  }
+
+  getSuspendedPatients(): DccPatient[] {
+    return this.dccPatients.filter(p => p.status === 'suspended');
+  }
+
+  getHighRiskPatients(): DccPatient[] {
+    return this.getActivePatients().filter(p => p.riskLevel === 'high');
+  }
+
+  getUpcomingAppointments(): DccPatient[] {
+    return this.getActivePatients().filter(p => p.nextAppointment && this.isUpcoming(p.nextAppointment));
+  }
+
+  isHighRisk(patient: DccPatient): boolean {
+    return patient.riskLevel === 'high';
+  }
+
+  hasUpcomingAppointment(patient: DccPatient): boolean {
+    return patient.nextAppointment ? this.isUpcoming(patient.nextAppointment) : false;
   }
 
   getTreatmentPhaseColor(phase: string): string {
@@ -162,13 +180,11 @@ export class DccListComponent implements OnInit {
   suspendDcc(patient: DccPatient) {
     if (confirm(`Êtes-vous sûr de vouloir suspendre le DCC de ${patient.patientName} ?`)) {
       patient.status = 'suspended';
-      this.categorizePatients();
     }
   }
 
   resumeDcc(patient: DccPatient) {
     patient.status = 'active';
-    this.categorizePatients();
   }
 
   formatDateTime(dateTime: string): string {
