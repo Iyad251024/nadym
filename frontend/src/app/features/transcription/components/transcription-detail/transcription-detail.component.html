@@ -156,7 +156,7 @@
               <div class="key-findings">
                 <ul>
                   <li *ngFor="let finding of formatKeyFindings(transcription.keyFindings)">
-                    {{ finding.replace('•', '').trim() }}
+                    {{ cleanFinding(finding) }}
                   </li>
                 </ul>
               </div>
@@ -173,7 +173,7 @@
               <mat-card-title>Recommandations thérapeutiques</mat-card-title>
               <mat-card-subtitle>Plan de traitement suggéré par l'IA</mat-card-subtitle>
               <div class="card-actions">
-                <button mat-icon-button (click)="copyToClipboard(transcription.recommendations)" 
+                <button mat-icon-button (click)="copyToClipboard(transcription.recommendations)"
                         matTooltip="Copier">
                   <mat-icon>content_copy</mat-icon>
                 </button>
@@ -183,7 +183,7 @@
               <div class="recommendations">
                 <ol>
                   <li *ngFor="let recommendation of formatRecommendations(transcription.recommendations)">
-                    {{ recommendation.replace(/^\d+\.\s*/, '') }}
+                    {{ cleanRecommendation(recommendation) }}
                   </li>
                 </ol>
               </div>

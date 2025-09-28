@@ -126,6 +126,16 @@ Suivi médical post-diagnostic, évaluation de l'évolution des symptômes
     console.log('Exporting transcription to PDF...');
   }
 
+  cleanRecommendation(text: string): string {
+    if (!text) return '';
+    return text.replace(/^\d+\.\s*/, '');
+  }
+
+  cleanFinding(text: string): string {
+    if (!text) return '';
+    return text.replace('•', '').trim();
+  }
+
   copyToClipboard(text: string) {
     navigator.clipboard.writeText(text).then(() => {
       // Success feedback would go here
