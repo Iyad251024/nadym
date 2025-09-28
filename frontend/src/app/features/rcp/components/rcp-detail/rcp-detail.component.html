@@ -141,22 +141,22 @@
       <mat-tab label="Contributions">
         <div class="tab-content">
           <div class="contributions-list">
-            <mat-card *ngFor="let participant of meeting.participants" 
-                      class="contribution-card"
-                      *ngIf="participant.contribution">
-              <mat-card-header>
-                <mat-card-title>{{ participant.name }}</mat-card-title>
-                <mat-card-subtitle>{{ participant.specialty }}</mat-card-subtitle>
-                <div class="participant-role">
-                  <mat-chip [color]="getRoleColor(participant.role)" selected>
-                    {{ getRoleLabel(participant.role) }}
-                  </mat-chip>
-                </div>
-              </mat-card-header>
-              <mat-card-content>
-                <p>{{ participant.contribution }}</p>
-              </mat-card-content>
-            </mat-card>
+            <ng-container *ngFor="let participant of meeting.participants">
+              <mat-card class="contribution-card" *ngIf="participant.contribution">
+                <mat-card-header>
+                  <mat-card-title>{{ participant.name }}</mat-card-title>
+                  <mat-card-subtitle>{{ participant.specialty }}</mat-card-subtitle>
+                  <div class="participant-role">
+                    <mat-chip [color]="getRoleColor(participant.role)" selected>
+                      {{ getRoleLabel(participant.role) }}
+                    </mat-chip>
+                  </div>
+                </mat-card-header>
+                <mat-card-content>
+                  <p>{{ participant.contribution }}</p>
+                </mat-card-content>
+              </mat-card>
+            </ng-container>
           </div>
         </div>
       </mat-tab>

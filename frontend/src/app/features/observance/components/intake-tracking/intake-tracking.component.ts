@@ -21,6 +21,7 @@ interface MedicationIntake {
 export class IntakeTrackingComponent implements OnInit {
   
   intakeForm: FormGroup;
+  today = new Date();
   todayIntakes: MedicationIntake[] = [
     {
       id: 1,
