@@ -24,17 +24,21 @@ services:
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin123
-      KC_DB: postgres
-      KC_DB_URL: jdbc:postgresql://postgres:5432/nadym
-      KC_DB_USERNAME: nadym
-      KC_DB_PASSWORD: nadym123
+      KC_HOSTNAME_STRICT: false
+      KC_HOSTNAME_STRICT_HTTPS: false
+      KC_HTTP_ENABLED: true
+      KC_HEALTH_ENABLED: true
+      KC_METRICS_ENABLED: true
     ports:
       - "8080:8080"
-    command: start-dev
+    command: 
+      - start-dev
+      - --import-realm
     depends_on:
       - postgres
     volumes:
       - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json
+      - keycloak_data:/opt/keycloak/data
     networks:
       - nadym-network
 
@@ -250,6 +254,7 @@ services:
 
 volumes:
   postgres_data:
+  keycloak_data:
 
 networks:
   nadym-network:
