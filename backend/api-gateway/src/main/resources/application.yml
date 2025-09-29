@@ -2,13 +2,14 @@ server:
   port: 8081
 
 spring:
+
   main:
     web-application-type: reactive
     allow-bean-definition-overriding: true
 
   application:
     name: api-gateway
-  
+
   cloud:
     gateway:
       routes:

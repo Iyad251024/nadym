@@ -2,9 +2,18 @@ package com.nadym.gateway;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 
 
-@SpringBootApplication(scanBasePackages = {"com.nadym.gateway", "com.nadym.common.security.reactive"})
+@SpringBootApplication(    scanBasePackages = {"com.nadym.gateway", "com.nadym.common.security.reactive"},
+        exclude = {
+                DataSourceAutoConfiguration.class,
+                DataSourceTransactionManagerAutoConfiguration.class,
+                HibernateJpaAutoConfiguration.class
+        }
+)
 public class ApiGatewayApplication {
 
     public static void main(String[] args) {
