@@ -2,8 +2,8 @@
 FROM nadym-base:latest
 
 # --- Étape 1 : copier et installer le module common ---
-COPY common ./common
-RUN cd common && mvn clean install -DskipTests
+#COPY common-core ./common-core
+#RUN cd common-core && mvn clean install -DskipTests
 
 # --- Étape 2 : préparer le service api-gateway ---
 COPY backend/api-gateway/pom.xml ./

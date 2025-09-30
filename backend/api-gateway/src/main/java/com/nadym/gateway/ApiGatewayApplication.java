@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerA
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 
 
-@SpringBootApplication(    scanBasePackages = {"com.nadym.gateway", "com.nadym.common.security.reactive"},
+@SpringBootApplication(    scanBasePackages = {"com.nadym.gateway", "com.nadym.gateway.security.reactive"},
         exclude = {
                 DataSourceAutoConfiguration.class,
                 DataSourceTransactionManagerAutoConfiguration.class,

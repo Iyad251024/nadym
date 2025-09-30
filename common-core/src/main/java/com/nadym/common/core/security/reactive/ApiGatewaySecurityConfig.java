@@ -1,4 +1,4 @@
-package com.nadym.common.security.reactive;
+package com.nadym.common.core.security.reactive;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
