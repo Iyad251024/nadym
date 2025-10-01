@@ -6,39 +6,76 @@
 </div>
 
 <div class="container">
-  <div class="prescriptions-grid">
+  <div class="prescriptions-grid" *ngIf="!loading && prescriptions.length > 0">
     <mat-card *ngFor="let prescription of prescriptions" class="prescription-card">
       <mat-card-header>
-        <mat-card-title>{{ prescription.patientName }}</mat-card-title>
-        <mat-card-subtitle>{{ prescription.doctorName }} - {{ prescription.date }}</mat-card-subtitle>
+        <mat-card-title>
+          {{ prescription.patient?.first_name }} {{ prescription.patient?.last_name }}
+        </mat-card-title>
+        <mat-card-subtitle>
+          {{ prescription.prescription_date | date:'dd/MM/yyyy' }}
+        </mat-card-subtitle>
         <div class="card-actions">
-          <mat-chip [color]="getStatusColor(prescription.status)" selected>
-            {{ getStatusLabel(prescription.status) }}
+          <mat-chip [color]="getStatusColor(prescription.status || 'ACTIVE')" selected>
+            {{ getStatusLabel(prescription.status || 'ACTIVE') }}
           </mat-chip>
         </div>
       </mat-card-header>
-      
+
       <mat-card-content>
         <div class="prescription-info">
           <div class="info-row">
             <mat-icon>medical_services</mat-icon>
             <span>{{ prescription.diagnosis }}</span>
           </div>
-          
-          <div class="medications">
+
+          <div class="medications" *ngIf="prescription.items && prescription.items.length > 0">
             <h4>Médicaments prescrits:</h4>
-            <mat-chip-set>
-              <mat-chip *ngFor="let medication of prescription.medications">
-                {{ medication }}
-              </mat-chip>
-            </mat-chip-set>
+            <div class="medication-list">
+              <div *ngFor="let item of prescription.items" class="medication-item">
+                <div class="medication-name">
+                  <mat-icon>medication</mat-icon>
+                  <strong>{{ item.medication_name }}</strong>
+                </div>
+                <div class="medication-details">
+                  <span>{{ item.dosage }} - {{ item.frequency }}</span>
+                  <span *ngIf="item.duration_days"> pendant {{ item.duration_days }} jours</span>
+                </div>
+                <div class="medication-instructions" *ngIf="item.instructions">
+                  <small>{{ item.instructions }}</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="notes" *ngIf="prescription.notes">
+            <mat-icon>note</mat-icon>
+            <p>{{ prescription.notes }}</p>
           </div>
         </div>
       </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-button (click)="viewPrescription(prescription)">
+          <mat-icon>visibility</mat-icon>
+          Voir détails
+        </button>
+        <button mat-button color="warn" (click)="deletePrescription(prescription)">
+          <mat-icon>delete</mat-icon>
+          Supprimer
+        </button>
+      </mat-card-actions>
     </mat-card>
+  </div>
+
+  <div class="empty-state" *ngIf="!loading && prescriptions.length === 0">
+    <mat-icon>receipt_long</mat-icon>
+    <h3>Aucune prescription</h3>
+    <p>Il n'y a aucune prescription enregistrée pour le moment.</p>
   </div>
 
   <div class="loading-spinner" *ngIf="loading">
     <mat-spinner></mat-spinner>
+    <p>Chargement des prescriptions...</p>
   </div>
 </div>

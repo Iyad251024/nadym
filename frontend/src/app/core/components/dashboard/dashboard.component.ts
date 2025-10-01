@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { KeycloakService } from 'keycloak-angular';
+import { StatisticsService } from '../../services/statistics.service';
+import { PatientStatistics } from '../../models/patient.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -7,16 +9,17 @@ import { KeycloakService } from 'keycloak-angular';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-  
+
   userProfile: any;
   userRoles: string[] = [];
-  
-  // Mock statistics - in real app, these would come from services
+  statistics: PatientStatistics | null = null;
+  loading = true;
+
   stats = {
-    totalPatients: 1247,
-    todayAppointments: 23,
-    pendingPrescriptions: 8,
-    activeConsultations: 3
+    totalPatients: 0,
+    todayAppointments: 0,
+    pendingPrescriptions: 0,
+    activeConsultations: 0
   };
 
   recentActivities = [
@@ -26,11 +29,35 @@ export class DashboardComponent implements OnInit {
     { type: 'message', message: 'Nouveau message de Dr. Leblanc', time: '2 h' }
   ];
 
-  constructor(private keycloakService: KeycloakService) {}
+  constructor(
+    private keycloakService: KeycloakService,
+    private statisticsService: StatisticsService
+  ) {}
 
   async ngOnInit() {
     this.userProfile = await this.keycloakService.loadUserProfile();
     this.userRoles = this.keycloakService.getUserRoles();
+    this.loadStatistics();
+  }
+
+  loadStatistics(): void {
+    this.loading = true;
+    this.statisticsService.getPatientStatistics().subscribe({
+      next: (stats) => {
+        this.statistics = stats;
+        this.stats = {
+          totalPatients: stats.totalPatients,
+          todayAppointments: stats.upcomingAppointments,
+          pendingPrescriptions: stats.activePrescriptions,
+          activeConsultations: stats.completedAppointments
+        };
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error loading statistics:', error);
+        this.loading = false;
+      }
+    });
   }
 
   getGreeting(): string {

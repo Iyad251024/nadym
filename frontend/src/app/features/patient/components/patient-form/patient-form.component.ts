@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { PatientService } from '../patient-service';
+import { Patient } from '../../../../core/models/patient.model';
 
 @Component({
   selector: 'app-patient-form',
@@ -9,10 +11,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrls: ['./patient-form.component.scss']
 })
 export class PatientFormComponent implements OnInit {
-  
+
   patientForm: FormGroup;
   isEditMode = false;
-  patientId: number | null = null;
+  patientId: string | null = null;
   loading = false;
 
   genders = [
@@ -25,7 +27,8 @@ export class PatientFormComponent implements OnInit {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private patientService: PatientService
   ) {
     this.patientForm = this.createForm();
   }
@@ -41,62 +44,81 @@ export class PatientFormComponent implements OnInit {
 
   createForm(): FormGroup {
     return this.fb.group({
-      firstName: ['', [Validators.required]],
-      lastName: ['', [Validators.required]],
+      first_name: ['', [Validators.required]],
+      last_name: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
-      phone: [''],
-      dateOfBirth: ['', [Validators.required]],
-      gender: [''],
+      phone: ['', [Validators.required]],
+      date_of_birth: ['', [Validators.required]],
+      gender: ['', [Validators.required]],
       address: [''],
-      city: [''],
-      postalCode: [''],
-      emergencyContactName: [''],
-      emergencyContactPhone: [''],
-      medicalHistory: [''],
-      allergies: [''],
-      currentMedications: ['']
+      blood_type: [''],
+      insurance_number: [''],
+      emergency_contact_name: [''],
+      emergency_contact_phone: [''],
+      medical_history: [''],
+      allergies: ['']
     });
   }
 
   loadPatient() {
+    if (!this.patientId) return;
+
     this.loading = true;
-    
-    // Mock data - in real app, this would come from a service
-    const mockPatient = {
-      firstName: 'Marie',
-      lastName: 'Dupont',
-      email: 'marie.dupont@email.com',
-      phone: '01 23 45 67 89',
-      dateOfBirth: '1985-03-15',
-      gender: 'FEMALE',
-      address: '123 Rue de la Paix',
-      city: 'Paris',
-      postalCode: '75001',
-      emergencyContactName: 'Jean Dupont',
-      emergencyContactPhone: '01 98 76 54 32',
-      medicalHistory: 'Hypertension artérielle, diabète type 2',
-      allergies: 'Pénicilline, fruits de mer',
-      currentMedications: 'Metformine 500mg, Lisinopril 10mg'
-    };
-    
-    setTimeout(() => {
-      this.patientForm.patchValue(mockPatient);
-      this.loading = false;
-    }, 1000);
+    this.patientService.getPatientById(this.patientId).subscribe({
+      next: (patient) => {
+        if (patient) {
+          this.patientForm.patchValue(patient);
+        }
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error loading patient:', error);
+        this.snackBar.open('Erreur lors du chargement du patient', 'Fermer', { duration: 3000 });
+        this.loading = false;
+      }
+    });
   }
 
   onSubmit() {
     if (this.patientForm.valid) {
       this.loading = true;
-      const formData = this.patientForm.value;
-      
-      // Simulate API call
-      setTimeout(() => {
-        this.loading = false;
-        const message = this.isEditMode ? 'Patient mis à jour avec succès' : 'Patient créé avec succès';
-        this.snackBar.open(message, 'Fermer', { duration: 3000 });
-        this.router.navigate(['/patients']);
-      }, 1500);
+      const formData: Patient = this.patientForm.value;
+
+      if (this.isEditMode && this.patientId) {
+        this.patientService.updatePatient(this.patientId, formData).subscribe({
+          next: (patient) => {
+            this.loading = false;
+            if (patient) {
+              this.snackBar.open('Patient mis à jour avec succès', 'Fermer', { duration: 3000 });
+              this.router.navigate(['/patients']);
+            } else {
+              this.snackBar.open('Erreur lors de la mise à jour', 'Fermer', { duration: 3000 });
+            }
+          },
+          error: (error) => {
+            console.error('Error updating patient:', error);
+            this.loading = false;
+            this.snackBar.open('Erreur lors de la mise à jour', 'Fermer', { duration: 3000 });
+          }
+        });
+      } else {
+        this.patientService.createPatient(formData).subscribe({
+          next: (patient) => {
+            this.loading = false;
+            if (patient) {
+              this.snackBar.open('Patient créé avec succès', 'Fermer', { duration: 3000 });
+              this.router.navigate(['/patients']);
+            } else {
+              this.snackBar.open('Erreur lors de la création', 'Fermer', { duration: 3000 });
+            }
+          },
+          error: (error) => {
+            console.error('Error creating patient:', error);
+            this.loading = false;
+            this.snackBar.open('Erreur lors de la création', 'Fermer', { duration: 3000 });
+          }
+        });
+      }
     } else {
       this.markFormGroupTouched();
     }

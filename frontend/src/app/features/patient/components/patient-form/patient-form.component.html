@@ -23,14 +23,14 @@
           <div class="form-row">
             <mat-form-field appearance="outline">
               <mat-label>Prénom</mat-label>
-              <input matInput formControlName="firstName" placeholder="Prénom">
-              <mat-error>{{ getErrorMessage('firstName') }}</mat-error>
+              <input matInput formControlName="first_name" placeholder="Prénom">
+              <mat-error>{{ getErrorMessage('first_name') }}</mat-error>
             </mat-form-field>
-            
+
             <mat-form-field appearance="outline">
               <mat-label>Nom</mat-label>
-              <input matInput formControlName="lastName" placeholder="Nom de famille">
-              <mat-error>{{ getErrorMessage('lastName') }}</mat-error>
+              <input matInput formControlName="last_name" placeholder="Nom de famille">
+              <mat-error>{{ getErrorMessage('last_name') }}</mat-error>
             </mat-form-field>
           </div>
 
@@ -40,18 +40,19 @@
               <input matInput type="email" formControlName="email" placeholder="email@exemple.com">
               <mat-error>{{ getErrorMessage('email') }}</mat-error>
             </mat-form-field>
-            
+
             <mat-form-field appearance="outline">
               <mat-label>Téléphone</mat-label>
               <input matInput formControlName="phone" placeholder="01 23 45 67 89">
+              <mat-error>{{ getErrorMessage('phone') }}</mat-error>
             </mat-form-field>
           </div>
 
           <div class="form-row">
             <mat-form-field appearance="outline">
               <mat-label>Date de naissance</mat-label>
-              <input matInput type="date" formControlName="dateOfBirth">
-              <mat-error>{{ getErrorMessage('dateOfBirth') }}</mat-error>
+              <input matInput type="date" formControlName="date_of_birth">
+              <mat-error>{{ getErrorMessage('date_of_birth') }}</mat-error>
             </mat-form-field>
             
             <mat-form-field appearance="outline">
@@ -78,13 +79,13 @@
 
           <div class="form-row">
             <mat-form-field appearance="outline">
-              <mat-label>Ville</mat-label>
-              <input matInput formControlName="city" placeholder="Paris">
+              <mat-label>Groupe sanguin</mat-label>
+              <input matInput formControlName="blood_type" placeholder="O+">
             </mat-form-field>
-            
+
             <mat-form-field appearance="outline">
-              <mat-label>Code postal</mat-label>
-              <input matInput formControlName="postalCode" placeholder="75001">
+              <mat-label>Numéro d'assurance</mat-label>
+              <input matInput formControlName="insurance_number" placeholder="123456789">
             </mat-form-field>
           </div>
         </mat-card-content>
@@ -98,12 +99,12 @@
           <div class="form-row">
             <mat-form-field appearance="outline">
               <mat-label>Nom du contact</mat-label>
-              <input matInput formControlName="emergencyContactName" placeholder="Nom complet">
+              <input matInput formControlName="emergency_contact_name" placeholder="Nom complet">
             </mat-form-field>
-            
+
             <mat-form-field appearance="outline">
               <mat-label>Téléphone du contact</mat-label>
-              <input matInput formControlName="emergencyContactPhone" placeholder="01 23 45 67 89">
+              <input matInput formControlName="emergency_contact_phone" placeholder="01 23 45 67 89">
             </mat-form-field>
           </div>
         </mat-card-content>
@@ -116,20 +117,14 @@
         <mat-card-content>
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Antécédents médicaux</mat-label>
-            <textarea matInput formControlName="medicalHistory" rows="3" 
+            <textarea matInput formControlName="medical_history" rows="3"
                       placeholder="Historique médical du patient"></textarea>
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Allergies</mat-label>
-            <textarea matInput formControlName="allergies" rows="2" 
+            <textarea matInput formControlName="allergies" rows="2"
                       placeholder="Allergies connues"></textarea>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Médicaments actuels</mat-label>
-            <textarea matInput formControlName="currentMedications" rows="3" 
-                      placeholder="Médicaments en cours"></textarea>
           </mat-form-field>
         </mat-card-content>
       </mat-card>

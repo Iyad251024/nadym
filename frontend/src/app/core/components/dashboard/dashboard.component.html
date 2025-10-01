@@ -6,27 +6,108 @@
 </div>
 
 <div class="container">
-  <!-- Statistics Cards -->
-  <div class="card-grid">
-    <div class="stat-card" *ngIf="userRoles.includes('DOCTOR') || userRoles.includes('NURSE')">
-      <h2 class="stat-number">{{ stats.totalPatients }}</h2>
-      <p class="stat-label">Patients total</p>
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Chargement des statistiques...</p>
+  </div>
+
+  <div *ngIf="!loading && statistics">
+    <!-- Statistics Cards -->
+    <div class="card-grid">
+      <div class="stat-card stat-card-primary" *ngIf="userRoles.includes('DOCTOR') || userRoles.includes('NURSE')">
+        <mat-icon class="stat-icon">people</mat-icon>
+        <h2 class="stat-number">{{ statistics.totalPatients }}</h2>
+        <p class="stat-label">Patients total</p>
+      </div>
+
+      <div class="stat-card stat-card-success" *ngIf="userRoles.includes('DOCTOR') || userRoles.includes('NURSE')">
+        <mat-icon class="stat-icon">event</mat-icon>
+        <h2 class="stat-number">{{ statistics.upcomingAppointments }}</h2>
+        <p class="stat-label">RDV à venir</p>
+      </div>
+
+      <div class="stat-card stat-card-warning" *ngIf="userRoles.includes('DOCTOR')">
+        <mat-icon class="stat-icon">receipt</mat-icon>
+        <h2 class="stat-number">{{ statistics.activePrescriptions }}</h2>
+        <p class="stat-label">Prescriptions actives</p>
+      </div>
+
+      <div class="stat-card stat-card-info" *ngIf="userRoles.includes('DOCTOR')">
+        <mat-icon class="stat-icon">check_circle</mat-icon>
+        <h2 class="stat-number">{{ statistics.completedAppointments }}</h2>
+        <p class="stat-label">Consultations terminées</p>
+      </div>
     </div>
-    
-    <div class="stat-card" *ngIf="userRoles.includes('DOCTOR') || userRoles.includes('NURSE')">
-      <h2 class="stat-number">{{ stats.todayAppointments }}</h2>
-      <p class="stat-label">RDV aujourd'hui</p>
+
+    <!-- Charts Section -->
+    <div class="charts-grid">
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>Rendez-vous par statut</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="chart-content">
+            <div *ngFor="let item of statistics.appointmentsByStatus" class="chart-bar">
+              <div class="chart-bar-label">{{ item.type }}</div>
+              <div class="chart-bar-container">
+                <div class="chart-bar-fill" [style.width.%]="(item.count / statistics.totalAppointments) * 100"></div>
+                <span class="chart-bar-value">{{ item.count }}</span>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>Rendez-vous par type</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="chart-content">
+            <div *ngFor="let item of statistics.appointmentsByType" class="chart-bar">
+              <div class="chart-bar-label">{{ item.type || 'Non spécifié' }}</div>
+              <div class="chart-bar-container">
+                <div class="chart-bar-fill chart-bar-fill-secondary" [style.width.%]="(item.count / statistics.totalAppointments) * 100"></div>
+                <span class="chart-bar-value">{{ item.count }}</span>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
     </div>
-    
-    <div class="stat-card" *ngIf="userRoles.includes('DOCTOR')">
-      <h2 class="stat-number">{{ stats.pendingPrescriptions }}</h2>
-      <p class="stat-label">Prescriptions en attente</p>
-    </div>
-    
-    <div class="stat-card" *ngIf="userRoles.includes('DOCTOR')">
-      <h2 class="stat-number">{{ stats.activeConsultations }}</h2>
-      <p class="stat-label">Consultations actives</p>
-    </div>
+
+    <!-- Recent Patients -->
+    <mat-card class="recent-patients-card" *ngIf="statistics.recentPatients.length > 0">
+      <mat-card-header>
+        <mat-card-title>Patients récents</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <table class="patients-table">
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Email</th>
+              <th>Téléphone</th>
+              <th>Date de naissance</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let patient of statistics.recentPatients">
+              <td>{{ patient.first_name }} {{ patient.last_name }}</td>
+              <td>{{ patient.email }}</td>
+              <td>{{ patient.phone }}</td>
+              <td>{{ patient.date_of_birth | date:'dd/MM/yyyy' }}</td>
+              <td>
+                <button mat-icon-button [routerLink]="['/patients', patient.id]">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </mat-card-content>
+    </mat-card>
   </div>
 
   <!-- Quick Actions -->

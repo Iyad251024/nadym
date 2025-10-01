@@ -1,14 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-
-interface Prescription {
-  id: number;
-  patientName: string;
-  doctorName: string;
-  date: string;
-  medications: string[];
-  status: 'active' | 'completed' | 'cancelled';
-  diagnosis: string;
-}
+import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { PrescriptionService } from '../../../../core/services/prescription.service';
+import { Prescription } from '../../../../core/models/patient.model';
 
 @Component({
   selector: 'app-prescription-list',
@@ -16,31 +10,15 @@ interface Prescription {
   styleUrls: ['./prescription-list.component.scss']
 })
 export class PrescriptionListComponent implements OnInit {
-  
-  prescriptions: Prescription[] = [
-    {
-      id: 1,
-      patientName: 'Marie Dupont',
-      doctorName: 'Dr. Jean Martin',
-      date: '2024-01-20',
-      medications: ['Amoxicilline 500mg', 'Paracétamol 1000mg'],
-      status: 'active',
-      diagnosis: 'Infection respiratoire'
-    },
-    {
-      id: 2,
-      patientName: 'Pierre Durand',
-      doctorName: 'Dr. Sophie Bernard',
-      date: '2024-01-18',
-      medications: ['Metformine 500mg', 'Lisinopril 10mg'],
-      status: 'active',
-      diagnosis: 'Diabète type 2, Hypertension'
-    }
-  ];
 
+  prescriptions: Prescription[] = [];
   loading = false;
 
-  constructor() {}
+  constructor(
+    private prescriptionService: PrescriptionService,
+    private router: Router,
+    private snackBar: MatSnackBar
+  ) {}
 
   ngOnInit() {
     this.loadPrescriptions();
@@ -48,9 +26,40 @@ export class PrescriptionListComponent implements OnInit {
 
   loadPrescriptions() {
     this.loading = true;
-    setTimeout(() => {
-      this.loading = false;
-    }, 1000);
+    this.prescriptionService.getAllPrescriptions().subscribe({
+      next: (prescriptions) => {
+        this.prescriptions = prescriptions;
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error loading prescriptions:', error);
+        this.snackBar.open('Erreur lors du chargement des prescriptions', 'Fermer', { duration: 3000 });
+        this.loading = false;
+      }
+    });
+  }
+
+  viewPrescription(prescription: Prescription) {
+    this.router.navigate(['/patients/prescriptions', prescription.id]);
+  }
+
+  deletePrescription(prescription: Prescription) {
+    if (!prescription.id) return;
+
+    if (confirm('Êtes-vous sûr de vouloir supprimer cette prescription?')) {
+      this.prescriptionService.deletePrescription(prescription.id).subscribe({
+        next: (success) => {
+          if (success) {
+            this.snackBar.open('Prescription supprimée', 'Fermer', { duration: 3000 });
+            this.loadPrescriptions();
+          }
+        },
+        error: (error) => {
+          console.error('Error deleting prescription:', error);
+          this.snackBar.open('Erreur lors de la suppression', 'Fermer', { duration: 3000 });
+        }
+      });
+    }
   }
 
   getStatusColor(status: string): string {
