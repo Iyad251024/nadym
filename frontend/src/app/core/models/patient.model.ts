@@ -69,6 +69,6 @@ export interface PatientStatistics {
   cancelledAppointments: number;
   activePrescriptions: number;
   appointmentsByType: { type: string; count: number }[];
-  appointmentsByStatus: { status: string; count: number }[];
+  appointmentsByStatus: { type: string; count: number }[];
   recentPatients: Patient[];
 }

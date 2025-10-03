@@ -1,0 +1,71 @@
+<h2 mat-dialog-title>Nouveau rendez-vous</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="bookingForm" class="booking-form">
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Patient</mat-label>
+        <mat-select formControlName="patient_id" required>
+          <mat-option *ngFor="let patient of patients" [value]="patient.id">
+            {{ patient.first_name }} {{ patient.last_name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Type de rendez-vous</mat-label>
+        <mat-select formControlName="type" required>
+          <mat-option value="CONSULTATION">Consultation</mat-option>
+          <mat-option value="FOLLOW_UP">Suivi</mat-option>
+          <mat-option value="EMERGENCY">Urgence</mat-option>
+          <mat-option value="TELEMEDICINE">Télémédecine</mat-option>
+          <mat-option value="VACCINATION">Vaccination</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Date</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="appointment_date" required>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Heure</mat-label>
+        <mat-select formControlName="appointment_time" required>
+          <mat-option *ngFor="let time of availableTimes" [value]="time.value">
+            {{ time.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Durée</mat-label>
+        <mat-select formControlName="duration_minutes" required>
+          <mat-option *ngFor="let duration of availableDurations" [value]="duration.value">
+            {{ duration.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="form-field"></div>
+    </div>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Motif</mat-label>
+      <textarea matInput formControlName="reason" rows="3"></textarea>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Annuler</button>
+  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="!bookingForm.valid || loading">
+    <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+    Créer
+  </button>
+</mat-dialog-actions>

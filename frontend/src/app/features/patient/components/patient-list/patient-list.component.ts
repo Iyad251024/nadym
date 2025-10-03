@@ -5,17 +5,8 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
-
-interface Patient {
-  id: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  dateOfBirth: string;
-  gender: string;
-  city: string;
-}
+import { PatientService } from '../patient-service';
+import { Patient } from '../../../../core/models/patient.model';
 
 @Component({
   selector: 'app-patient-list',
@@ -23,8 +14,8 @@ interface Patient {
   styleUrls: ['./patient-list.component.scss']
 })
 export class PatientListComponent implements OnInit, AfterViewInit {
-  
-  displayedColumns: string[] = ['id', 'name', 'email', 'phone', 'age', 'city', 'actions'];
+
+  displayedColumns: string[] = [ 'name', 'email', 'phone', 'age', 'address', 'actions'];
   dataSource = new MatTableDataSource<Patient>();
   loading = false;
   searchTerm = '';
@@ -32,43 +23,10 @@ export class PatientListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  // Mock data - in real app, this would come from a service
-  mockPatients: Patient[] = [
-    {
-      id: 1,
-      firstName: 'Marie',
-      lastName: 'Dupont',
-      email: 'marie.dupont@email.com',
-      phone: '01 23 45 67 89',
-      dateOfBirth: '1985-03-15',
-      gender: 'FEMALE',
-      city: 'Paris'
-    },
-    {
-      id: 2,
-      firstName: 'Jean',
-      lastName: 'Martin',
-      email: 'jean.martin@email.com',
-      phone: '01 98 76 54 32',
-      dateOfBirth: '1978-11-22',
-      gender: 'MALE',
-      city: 'Lyon'
-    },
-    {
-      id: 3,
-      firstName: 'Sophie',
-      lastName: 'Bernard',
-      email: 'sophie.bernard@email.com',
-      phone: '01 11 22 33 44',
-      dateOfBirth: '1992-07-08',
-      gender: 'FEMALE',
-      city: 'Marseille'
-    }
-  ];
-
   constructor(
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private patientService: PatientService
   ) {}
 
   ngOnInit() {
@@ -82,11 +40,19 @@ export class PatientListComponent implements OnInit, AfterViewInit {
 
   loadPatients() {
     this.loading = true;
-    // Simulate API call
-    setTimeout(() => {
-      this.dataSource.data = this.mockPatients;
-      this.loading = false;
-    }, 1000);
+    this.patientService.getAllPatients().subscribe({
+      next: (patients) => {
+        this.dataSource.data = patients;
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error loading patients:', error);
+        this.snackBar.open('Erreur lors du chargement des patients', 'Fermer', {
+          duration: 3000
+        });
+        this.loading = false;
+      }
+    });
   }
 
   applyFilter() {
@@ -98,11 +64,11 @@ export class PatientListComponent implements OnInit, AfterViewInit {
     const birthDate = new Date(dateOfBirth);
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
-    
+
     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
       age--;
     }
-    
+
     return age;
   }
 
@@ -115,12 +81,23 @@ export class PatientListComponent implements OnInit, AfterViewInit {
   }
 
   deletePatient(patient: Patient) {
-    if (confirm(`Êtes-vous sûr de vouloir supprimer le patient ${patient.firstName} ${patient.lastName} ?`)) {
-      // Simulate API call
-      this.snackBar.open('Patient supprimé avec succès', 'Fermer', {
-        duration: 3000
+    if (confirm(`Êtes-vous sûr de vouloir supprimer le patient ${patient.first_name} ${patient.last_name} ?`)) {
+      this.patientService.deletePatient(patient.id!).subscribe({
+        next: (success) => {
+          if (success) {
+            this.snackBar.open('Patient supprimé avec succès', 'Fermer', {
+              duration: 3000
+            });
+            this.loadPatients();
+          }
+        },
+        error: (error) => {
+          console.error('Error deleting patient:', error);
+          this.snackBar.open('Erreur lors de la suppression', 'Fermer', {
+            duration: 3000
+          });
+        }
       });
-      this.loadPatients();
     }
   }
 

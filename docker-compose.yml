@@ -27,6 +27,11 @@ services:
       KC_HTTP_ENABLED: "true"
       KC_HEALTH_ENABLED: "true"
       KC_METRICS_ENABLED: "true"
+      KC_HTTP_CORS_ENABLED: "true"
+      KC_HTTP_CORS_ALLOWED_ORIGINS: "*"
+      KC_HTTP_CORS_ALLOWED_METHODS: "GET,POST,PUT,DELETE,OPTIONS"
+      KC_HTTP_CORS_ALLOWED_HEADERS: "Accept,Accept-Language,Content-Language,Content-Type,Authorization"
+      KC_HTTP_CORS_ALLOW_CREDENTIALS: "true"
     ports:
       - "8080:8080"
     command: 

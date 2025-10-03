@@ -16,6 +16,15 @@ public class ApiGatewaySecurityConfig {
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         http
+                // CORS configuration
+                .cors(cors -> cors.configurationSource(request -> {
+                    org.springframework.web.cors.CorsConfiguration config = new org.springframework.web.cors.CorsConfiguration();
+                    config.setAllowedOrigins(java.util.Arrays.asList("http://localhost:4200", "http://frontend"));
+                    config.setAllowedMethods(java.util.Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                    config.setAllowedHeaders(java.util.Arrays.asList("*"));
+                    config.setAllowCredentials(true);
+                    return config;
+                }))
                 // Autoriser actuator sans auth
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers("/actuator/**").permitAll()

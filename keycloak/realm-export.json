@@ -122,6 +122,42 @@
       ]
     },
     {
+      "clientId": "account",
+      "enabled": true,
+      "alwaysDisplayInConsole": false,
+      "clientAuthenticatorType": "client-secret",
+      "publicClient": true,
+      "frontchannelLogout": false,
+      "protocol": "openid-connect",
+      "attributes": {
+        "post.logout.redirect.uris": "+"
+      },
+      "redirectUris": [
+        "http://localhost:4200/*",
+        "http://frontend/*",
+        "http://localhost:4200"
+      ],
+      "webOrigins": [
+        "http://localhost:4200",
+        "http://frontend"
+      ],
+      "fullScopeAllowed": true,
+      "nodeReRegistrationTimeout": -1,
+      "defaultClientScopes": [
+        "web-origins",
+        "acr",
+        "profile",
+        "roles",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access",
+        "microprofile-jwt"
+      ]
+    },
+    {
       "clientId": "nadym-backend",
       "enabled": true,
       "alwaysDisplayInConsole": false,
@@ -286,7 +322,10 @@
     "cibaAuthRequestedUserHint": "login_hint",
     "parRequestUriLifespan": "60",
     "frontendUrl": "",
-    "consoleDisplayName": "NadyM Medical Platform"
+    "consoleDisplayName": "NadyM Medical Platform",
+    "corsAllowedOrigins": "http://localhost:4200,http://frontend",
+    "corsAllowedMethods": "GET,POST,PUT,DELETE,OPTIONS",
+    "corsAllowedHeaders": "Accept,Accept-Language,Content-Language,Content-Type,Authorization"
   },
   "keycloakVersion": "22.0.1"
 }

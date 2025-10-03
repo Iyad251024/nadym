@@ -4,6 +4,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { AppointmentService } from '../../../../core/services/appointment.service';
 import { Appointment } from '../../../../core/models/patient.model';
+import { SupabaseService } from '../../../../core/services/supabase.service';
+console.log(SupabaseService);
+
 
 @Component({
   selector: 'app-appointment-list',
@@ -49,13 +52,13 @@ export class AppointmentListComponent implements OnInit {
     if (!appointment.id) return;
 
     this.appointmentService.confirmAppointment(appointment.id).subscribe({
-      next: (success) => {
+      next: (success: boolean) => {
         if (success) {
           this.snackBar.open('Rendez-vous confirmé', 'Fermer', { duration: 3000 });
           this.loadAppointments();
         }
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error confirming appointment:', error);
         this.snackBar.open('Erreur lors de la confirmation', 'Fermer', { duration: 3000 });
       }
@@ -67,13 +70,13 @@ export class AppointmentListComponent implements OnInit {
 
     if (confirm('Êtes-vous sûr de vouloir annuler ce rendez-vous?')) {
       this.appointmentService.cancelAppointment(appointment.id).subscribe({
-        next: (success) => {
+        next: (success: boolean) => {
           if (success) {
             this.snackBar.open('Rendez-vous annulé', 'Fermer', { duration: 3000 });
             this.loadAppointments();
           }
         },
-        error: (error) => {
+        error: (error: any) => {
           console.error('Error canceling appointment:', error);
           this.snackBar.open('Erreur lors de l\'annulation', 'Fermer', { duration: 3000 });
         }
@@ -86,13 +89,13 @@ export class AppointmentListComponent implements OnInit {
 
     if (confirm('Êtes-vous sûr de vouloir supprimer définitivement ce rendez-vous?')) {
       this.appointmentService.deleteAppointment(appointment.id).subscribe({
-        next: (success) => {
+        next: (success: boolean) => {
           if (success) {
             this.snackBar.open('Rendez-vous supprimé', 'Fermer', { duration: 3000 });
             this.loadAppointments();
           }
         },
-        error: (error) => {
+        error: (error: any) => {
           console.error('Error deleting appointment:', error);
           this.snackBar.open('Erreur lors de la suppression', 'Fermer', { duration: 3000 });
         }
@@ -104,13 +107,13 @@ export class AppointmentListComponent implements OnInit {
     if (!appointment.id) return;
 
     this.appointmentService.completeAppointment(appointment.id).subscribe({
-      next: (success) => {
+      next: (success: boolean) => {
         if (success) {
           this.snackBar.open('Rendez-vous marqué comme terminé', 'Fermer', { duration: 3000 });
           this.loadAppointments();
         }
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error completing appointment:', error);
         this.snackBar.open('Erreur lors de la mise à jour', 'Fermer', { duration: 3000 });
       }

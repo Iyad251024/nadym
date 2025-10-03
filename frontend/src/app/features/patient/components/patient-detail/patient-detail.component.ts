@@ -1,23 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-
-interface Patient {
-  id: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  dateOfBirth: string;
-  gender: string;
-  address: string;
-  city: string;
-  postalCode: string;
-  emergencyContactName: string;
-  emergencyContactPhone: string;
-  medicalHistory: string;
-  allergies: string;
-  currentMedications: string;
-}
+import { PatientService } from '../patient-service';
+import { Patient } from '../../../../core/models/patient.model';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-patient-detail',
@@ -31,7 +16,9 @@ export class PatientDetailComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private patientService: PatientService,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit() {
@@ -41,29 +28,20 @@ export class PatientDetailComponent implements OnInit {
   loadPatient() {
     this.loading = true;
     const id = this.route.snapshot.params['id'];
-    
-    // Mock data - in real app, this would come from a service
-    this.patient = {
-      id: parseInt(id),
-      firstName: 'Marie',
-      lastName: 'Dupont',
-      email: 'marie.dupont@email.com',
-      phone: '01 23 45 67 89',
-      dateOfBirth: '1985-03-15',
-      gender: 'FEMALE',
-      address: '123 Rue de la Paix',
-      city: 'Paris',
-      postalCode: '75001',
-      emergencyContactName: 'Jean Dupont',
-      emergencyContactPhone: '01 98 76 54 32',
-      medicalHistory: 'Hypertension artérielle, diabète type 2',
-      allergies: 'Pénicilline, fruits de mer',
-      currentMedications: 'Metformine 500mg, Lisinopril 10mg'
-    };
-    
-    setTimeout(() => {
-      this.loading = false;
-    }, 1000);
+
+    this.patientService.getPatientById(id).subscribe({
+      next: (patient) => {
+        this.patient = patient;
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error loading patient:', error);
+        this.snackBar.open('Erreur lors du chargement du patient', 'Fermer', {
+          duration: 3000
+        });
+        this.loading = false;
+      }
+    });
   }
 
   editPatient() {
@@ -77,14 +55,14 @@ export class PatientDetailComponent implements OnInit {
   getAge(): number {
     if (!this.patient) return 0;
     const today = new Date();
-    const birthDate = new Date(this.patient.dateOfBirth);
+    const birthDate = new Date(this.patient.date_of_birth);
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
-    
+
     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
       age--;
     }
-    
+
     return age;
   }
 }

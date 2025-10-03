@@ -35,7 +35,11 @@ export class DashboardComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    this.userProfile = await this.keycloakService.loadUserProfile();
+    try {
+      this.userProfile = await this.keycloakService.loadUserProfile();
+    } catch (error) {
+      console.error('Error loading user profile:', error);
+    }
     this.userRoles = this.keycloakService.getUserRoles();
     this.loadStatistics();
   }

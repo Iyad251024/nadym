@@ -20,6 +20,11 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
+    path: 'appointments',
+    loadChildren: () => import('./features/appointment/appointment.module').then(m => m.AppointmentModule),
+    canActivate: [AuthGuard]
+  },
+  {
     path: 'observance',
     loadChildren: () => import('./features/observance/observance.module').then(m => m.ObservanceModule),
     canActivate: [AuthGuard]

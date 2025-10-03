@@ -31,7 +31,7 @@ export class SidebarComponent implements OnInit {
       title: 'Gestion des patients',
       items: [
         { label: 'Patients', icon: 'people', route: '/patients', roles: ['DOCTOR', 'NURSE'] },
-        { label: 'Rendez-vous', icon: 'event', route: '/patients/appointments', roles: ['DOCTOR', 'NURSE'] },
+        { label: 'Rendez-vous', icon: 'event', route: '/appointments', roles: ['DOCTOR', 'NURSE'] },
         { label: 'Prescriptions', icon: 'receipt', route: '/patients/prescriptions', roles: ['DOCTOR'] }
       ]
     },

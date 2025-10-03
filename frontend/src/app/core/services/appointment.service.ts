@@ -20,7 +20,7 @@ export class AppointmentService {
         `)
         .order('appointment_date', { ascending: true })
     ).pipe(
-      map(response => {
+      map((response: any) => {
         if (response.error) throw response.error;
         return response.data || [];
       }),
@@ -42,7 +42,7 @@ export class AppointmentService {
         .eq('id', id)
         .maybeSingle()
     ).pipe(
-      map(response => {
+      map((response: any) => {
         if (response.error) throw response.error;
         return response.data;
       }),
@@ -66,7 +66,7 @@ export class AppointmentService {
         .in('status', ['SCHEDULED', 'CONFIRMED'])
         .order('appointment_date', { ascending: true })
     ).pipe(
-      map(response => {
+      map((response: any) => {
         if (response.error) throw response.error;
         return response.data || [];
       }),
@@ -88,7 +88,7 @@ export class AppointmentService {
         `)
         .maybeSingle()
     ).pipe(
-      map(response => {
+      map((response: any) => {
         if (response.error) throw response.error;
         return response.data;
       }),
@@ -111,7 +111,7 @@ export class AppointmentService {
         `)
         .maybeSingle()
     ).pipe(
-      map(response => {
+      map((response: any) => {
         if (response.error) throw response.error;
         return response.data;
       }),
@@ -135,7 +135,7 @@ export class AppointmentService {
         .delete()
         .eq('id', id)
     ).pipe(
-      map(response => {
+      map((response: any) => {
         if (response.error) throw response.error;
         return true;
       }),

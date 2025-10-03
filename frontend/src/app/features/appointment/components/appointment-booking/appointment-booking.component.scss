@@ -1,0 +1,15 @@
+.booking-form {
+  .form-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+
+    .form-field {
+      flex: 1;
+    }
+  }
+
+  .full-width {
+    width: 100%;
+  }
+}

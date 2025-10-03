@@ -1,0 +1,306 @@
+<div class="page-header">
+  <div class="container">
+    <h1>Tableau de bord des rendez-vous</h1>
+    <p>Gestion et contrôle des rendez-vous</p>
+  </div>
+</div>
+
+<div class="dashboard-container">
+  <!-- Agenda Section (Left) -->
+  <div class="agenda-section">
+    <div class="agenda-header">
+      <h2>Agenda</h2>
+      <div class="view-controls">
+        <mat-button-toggle-group [(ngModel)]="currentView" (change)="onViewChange($event)">
+          <mat-button-toggle value="day">Jour</mat-button-toggle>
+          <mat-button-toggle value="week">Semaine</mat-button-toggle>
+          <mat-button-toggle value="month">Mois</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+      <button mat-raised-button color="primary" (click)="bookAppointment()">
+        <mat-icon>add</mat-icon>
+        Nouveau
+      </button>
+    </div>
+    <div class="agenda-content">
+      <!-- Day View -->
+      <div class="calendar-grid" *ngIf="currentView === 'day'">
+        <div class="time-slot" *ngFor="let slot of timeSlots" [class.has-appointment]="hasAppointmentAt(slot)">
+          <div class="time-label">{{ slot }}</div>
+          <div class="appointment-slot">
+            <div class="appointment-card"
+                 *ngIf="getAppointmentAt(slot) as appointment"
+                 [style.background-color]="getStatusColor(appointment.status)"
+                 (click)="editAppointment(appointment)">
+              <div class="appointment-info">
+                <div class="appointment-time">{{ appointment.appointment_date | date:'HH:mm' }}</div>
+                <div class="appointment-patient">{{ getPatientName(appointment.patient_id) }}</div>
+                <div class="appointment-type">{{ appointment.type }}</div>
+              </div>
+              <div class="appointment-actions">
+                <button mat-icon-button
+                        [matMenuTriggerFor]="statusMenu"
+                        (click)="$event.stopPropagation()"
+                        matTooltip="Changer le statut">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #statusMenu="matMenu">
+                  <button mat-menu-item (click)="changeAppointmentStatus(appointment, 'SCHEDULED')">
+                    <mat-icon>schedule</mat-icon>
+                    Programmé
+                  </button>
+                  <button mat-menu-item (click)="changeAppointmentStatus(appointment, 'CONFIRMED')">
+                    <mat-icon>check_circle</mat-icon>
+                    Confirmé
+                  </button>
+                  <button mat-menu-item (click)="changeAppointmentStatus(appointment, 'IN_PROGRESS')">
+                    <mat-icon>play_circle</mat-icon>
+                    En cours
+                  </button>
+                  <button mat-menu-item (click)="changeAppointmentStatus(appointment, 'COMPLETED')">
+                    <mat-icon>done</mat-icon>
+                    Terminé
+                  </button>
+                  <button mat-menu-item (click)="changeAppointmentStatus(appointment, 'CANCELLED')">
+                    <mat-icon>cancel</mat-icon>
+                    Annulé
+                  </button>
+                </mat-menu>
+              </div>
+            </div>
+            <div class="empty-slot"
+                 *ngIf="!hasAppointmentAt(slot)"
+                 (click)="bookAppointmentAt(slot)">
+              <mat-icon>add</mat-icon>
+              <span>Réserver</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Week View -->
+      <div class="week-view" *ngIf="currentView === 'week'">
+        <div class="week-header">
+          <button mat-icon-button (click)="previousWeek()">
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+          <h3>{{ getWeekRange() }}</h3>
+          <button mat-icon-button (click)="nextWeek()">
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+        </div>
+        <div class="week-calendar-grid">
+          <!-- Time column (fixed on left) -->
+          <div class="week-time-column">
+            <div class="week-header-spacer"></div>
+            <div class="time-slot-label" *ngFor="let slot of timeSlots">
+              {{ slot }}
+            </div>
+          </div>
+
+          <!-- Days columns -->
+          <div class="week-days-columns">
+            <div class="week-day-column" *ngFor="let day of weekDays">
+              <div class="week-day-header" [class.current-day]="isCurrentDay(day.date)">
+                <div class="day-name">{{ day.date | date:'EEE' }}</div>
+                <div class="day-number" [class.current-day-circle]="isCurrentDay(day.date)">
+                  {{ day.date | date:'d' }}
+                </div>
+              </div>
+              <div class="week-day-slots">
+                <div class="week-time-cell"
+                     *ngFor="let slot of timeSlots"
+                     [class.current-day]="isCurrentDay(day.date)"
+                     (click)="bookAppointmentAtForDay(slot, day.date)">
+                  <div class="appointment-in-slot"
+                       *ngIf="getAppointmentAtForDay(slot, day.date) as appointment"
+                       [style.background-color]="getStatusColor(appointment.status)">
+                    <div class="appointment-info">
+                      <div class="appointment-patient">{{ getPatientName(appointment.patient_id) }}</div>
+                      <div class="appointment-type">{{ appointment.type }}</div>
+                    </div>
+                    <div class="appointment-actions">
+                      <button mat-icon-button
+                              [matMenuTriggerFor]="statusMenu"
+                              (click)="$event.stopPropagation()"
+                              matTooltip="Changer le statut">
+                        <mat-icon>more_vert</mat-icon>
+                      </button>
+                      <mat-menu #statusMenu="matMenu">
+                        <button mat-menu-item (click)="changeAppointmentStatus(appointment, 'SCHEDULED')">
+                          <mat-icon>schedule</mat-icon>
+                          Programmé
+                        </button>
+                        <button mat-menu-item (click)="changeAppointmentStatus(appointment, 'CONFIRMED')">
+                          <mat-icon>check_circle</mat-icon>
+                          Confirmé
+                        </button>
+                        <button mat-menu-item (click)="changeAppointmentStatus(appointment, 'IN_PROGRESS')">
+                          <mat-icon>play_circle</mat-icon>
+                          En cours
+                        </button>
+                        <button mat-menu-item (click)="changeAppointmentStatus(appointment, 'COMPLETED')">
+                          <mat-icon>done</mat-icon>
+                          Terminé
+                        </button>
+                        <button mat-menu-item (click)="changeAppointmentStatus(appointment, 'CANCELLED')">
+                          <mat-icon>cancel</mat-icon>
+                          Annulé
+                        </button>
+                      </mat-menu>
+                    </div>
+                  </div>
+                  <div class="empty-week-slot"
+                       *ngIf="!hasAppointmentAtForDay(slot, day.date)"
+                       (click)="bookAppointmentAtForDay(slot, day.date); $event.stopPropagation()">
+                    <mat-icon>add</mat-icon>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Month View -->
+      <div class="month-view" *ngIf="currentView === 'month'">
+        <div class="month-header">
+          <button mat-icon-button (click)="previousMonth()">
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+          <h3>{{ currentMonth | date:'MMMM yyyy' }}</h3>
+          <button mat-icon-button (click)="nextMonth()">
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+        </div>
+        <div class="month-grid">
+          <div class="month-day" *ngFor="let day of monthDays" [class.current-month]="day.isCurrentMonth" (click)="bookAppointmentForDay(day.date)">
+            <div class="day-header">
+              <div class="day-number" [class.current-day-circle]="isCurrentDay(day.date)">{{ day.date | date:'d' }}</div>
+              <button mat-icon-button class="add-button" (click)="bookAppointmentForDay(day.date); $event.stopPropagation()">
+                <mat-icon>add</mat-icon>
+              </button>
+            </div>
+            <div class="day-appointments">
+              <div class="month-appointment"
+                   *ngFor="let appointment of getAppointmentsForDay(day.date)"
+                   [style.background-color]="getStatusColor(appointment.status)">
+                <div class="appointment-content">
+                  {{ appointment.appointment_date | date:'HH:mm' }} - {{ getPatientName(appointment.patient_id) }}
+                </div>
+                <div class="appointment-actions">
+                  <button mat-icon-button
+                          [matMenuTriggerFor]="statusMenu"
+                          (click)="$event.stopPropagation()"
+                          matTooltip="Changer le statut">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #statusMenu="matMenu">
+                    <button mat-menu-item (click)="changeAppointmentStatus(appointment, 'SCHEDULED')">
+                      <mat-icon>schedule</mat-icon>
+                      Programmé
+                    </button>
+                    <button mat-menu-item (click)="changeAppointmentStatus(appointment, 'CONFIRMED')">
+                      <mat-icon>check_circle</mat-icon>
+                      Confirmé
+                    </button>
+                    <button mat-menu-item (click)="changeAppointmentStatus(appointment, 'IN_PROGRESS')">
+                      <mat-icon>play_circle</mat-icon>
+                      En cours
+                    </button>
+                    <button mat-menu-item (click)="changeAppointmentStatus(appointment, 'COMPLETED')">
+                      <mat-icon>done</mat-icon>
+                      Terminé
+                    </button>
+                    <button mat-menu-item (click)="changeAppointmentStatus(appointment, 'CANCELLED')">
+                      <mat-icon>cancel</mat-icon>
+                      Annulé
+                    </button>
+                  </mat-menu>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Appointments List Section (Right) -->
+  <div class="list-section">
+    <div class="list-header">
+      <h2>Liste des rendez-vous</h2>
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Rechercher</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Patient, date...">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </div>
+
+    <div class="data-table">
+      <div class="loading-spinner" *ngIf="loading">
+        <mat-spinner></mat-spinner>
+      </div>
+
+      <table mat-table [dataSource]="dataSource" matSort *ngIf="!loading">
+        <!-- Patient Name Column -->
+        <ng-container matColumnDef="patient_name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Patient</th>
+          <td mat-cell *matCellDef="let appointment">{{ getPatientName(appointment.patient_id) }}</td>
+        </ng-container>
+
+        <!-- Date Column -->
+        <ng-container matColumnDef="appointment_date">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Date et heure</th>
+          <td mat-cell *matCellDef="let appointment">{{ appointment.appointment_date | date:'short' }}</td>
+        </ng-container>
+
+        <!-- Status Column -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Statut</th>
+          <td mat-cell *matCellDef="let appointment">
+            <span class="status-chip" [style.background-color]="getStatusColor(appointment.status)">
+              {{ getStatusText(appointment.status) }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Type Column -->
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef>Type</th>
+          <td mat-cell *matCellDef="let appointment">{{ appointment.type }}</td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let appointment">
+            <button mat-icon-button
+                    *ngIf="appointment.status === 'SCHEDULED'"
+                    (click)="confirmAppointment(appointment)"
+                    matTooltip="Confirmer">
+              <mat-icon>check</mat-icon>
+            </button>
+            <button mat-icon-button
+                    *ngIf="appointment.status !== 'CANCELLED' && appointment.status !== 'COMPLETED'"
+                    (click)="cancelAppointment(appointment)"
+                    matTooltip="Annuler">
+              <mat-icon>cancel</mat-icon>
+            </button>
+            <button mat-icon-button
+                    color="warn"
+                    (click)="deleteAppointment(appointment)"
+                    matTooltip="Supprimer">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="editAppointment(row)"></tr>
+      </table>
+
+      <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" showFirstLastButtons *ngIf="!loading"></mat-paginator>
+    </div>
+  </div>
+</div>

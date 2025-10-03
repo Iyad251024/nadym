@@ -1,0 +1,17 @@
+# Stage 1: Node pour dev
+FROM node:20
+
+WORKDIR /app
+
+# Installer les dépendances
+COPY package*.json ./
+RUN npm install
+
+# Copier le code source
+COPY . .
+
+# Expose le port de ng serve
+EXPOSE 4200
+
+# Lancer Angular avec live reload et polling
+CMD ["ng", "serve", "--host", "0.0.0.0", "--poll=2000", "--disable-host-check"]
